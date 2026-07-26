@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : clapper
+version    : 0.6.1
+release    : 1
+source     :
+    - https://github.com/Rafostar/clapper/archive/refs/tags/0.6.1.tar.gz : d244ec6108ebff5ccc817a5888f3f73f52cac129fe480d480cb3f6b9db19cfbe
+homepage   : https://github.com/Rafostar/clapper
+license    : GPL-3.0-or-later
+component  : multimedia.video
+summary    : Modern media player built using GTK4 and GStreamer
+description: |
+    Clapper is a GNOME media player built using GTK4 toolkit and powered by GStreamer.
+builddeps  :
+    - pkgconfig(gtk4)
+    - pkgconfig(libadwaita-1)
+    - pkgconfig(gstreamer-1.0)
+    - pkgconfig(gstreamer-plugins-base-1.0)
+    - pkgconfig(gstreamer-tag-1.0)
+    - pkgconfig(gstreamer-video-1.0)
+    - pkgconfig(graphene-gobject-1.0)
+    - pkgconfig(microdns)
+    - desktop-file-utils
+setup      : |
+    %meson_configure
+build      : |
+    %ninja_build
+install    : |
+    %ninja_install
