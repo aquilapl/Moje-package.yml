@@ -1,0 +1,99 @@
+name: windscribe
+version: 2.23.12
+release: 2
+
+source:
+  - https://github.com/Windscribe/Desktop-App/releases/download/v2.23.12/windscribe_2.23.12_amd64.deb: 632498526e54462b025723bd44bfbcf60324427ec2de74e8570ba301f02b232e
+
+license: GPL-2.0-only
+component: network.vpn
+summary: Windscribe VPN desktop client
+description: |
+  Windscribe VPN desktop client - hides your physical location, blocks ads
+  and trackers. Repackaged from the official upstream .deb release.
+
+strip: false
+
+builddeps:
+  - libglvnd
+  - libdrm
+  - libx11-devel
+  - libxcb-devel
+  - xcb-util
+  - xcb-util-image
+  - xcb-util-keysyms
+  - xcb-util-renderutil
+  - xcb-util-wm
+  - libxkbcommon
+  - wayland
+  - wayland-protocols
+  - fontconfig
+  - freetype2
+  - harfbuzz
+  - xcb-util-cursor
+
+rundeps:
+  - iproute2
+  - psmisc
+  - desktop-file-utils
+  - iptables
+  - iputils
+  - qt6-base
+  - xcb-util-cursor
+  - libxkbcommon
+  - libxcb
+  - xcb-util
+  - fontconfig
+  - freetype2
+  - harfbuzz
+  - glib2
+  - wayland
+  - libx11
+
+build: |
+  export YPKG_IGNORE_DEPS=1
+  export YPKG_DISABLE_EXTERNAL_DEPS=1
+
+  mkdir -p wsroot
+  tar -xf data.tar.* -C wsroot
+
+install: |
+  install -d $installdir/opt/windscribe/lib
+  install -d $installdir/opt/windscribe/scripts
+
+  install -m0755 wsroot/opt/windscribe/Windscribe $installdir/opt/windscribe/
+  install -m0755 wsroot/opt/windscribe/helper $installdir/opt/windscribe/
+  install -m0755 wsroot/opt/windscribe/windscribe-cli $installdir/opt/windscribe/
+  install -m0755 wsroot/opt/windscribe/windscribeopenvpn $installdir/opt/windscribe/
+  install -m0755 wsroot/opt/windscribe/windscribeamneziawg $installdir/opt/windscribe/
+  install -m0755 wsroot/opt/windscribe/windscribectrld $installdir/opt/windscribe/
+  install -m0755 wsroot/opt/windscribe/windscribewstunnel $installdir/opt/windscribe/
+  install -m0644 wsroot/opt/windscribe/open_source_licenses.txt $installdir/opt/windscribe/
+  install -m0755 wsroot/opt/windscribe/lib/*.so* $installdir/opt/windscribe/lib/
+  install -m0755 wsroot/opt/windscribe/scripts/* $installdir/opt/windscribe/scripts/
+
+  install -d $installdir/usr/bin
+  ln -sf /opt/windscribe/windscribe-cli $installdir/usr/bin/windscribe-cli
+
+  install -D -m0644 wsroot/usr/lib/systemd/system/windscribe-helper.service $installdir/usr/lib/systemd/system/windscribe-helper.service
+  install -D -m0644 wsroot/usr/lib/systemd/system-preset/69-windscribe-helper.preset $installdir/usr/lib/systemd/system-preset/69-windscribe-helper.preset
+
+  # Fix icon name in .desktop file (Windscribe uses uppercase, Solus requires lowercase)
+  sed -i 's/Icon=Windscribe/Icon=windscribe/' wsroot/usr/share/applications/windscribe.desktop
+
+  install -D -m0644 wsroot/usr/share/applications/windscribe.desktop $installdir/usr/share/applications/windscribe.desktop
+  install -D -m0644 wsroot/etc/windscribe/autostart/windscribe.desktop $installdir/etc/xdg/autostart/windscribe.desktop
+
+  for size in 16 24 32 48 64 128 256; do
+    install -D -m0644 wsroot/usr/share/icons/hicolor/${size}x${size}/apps/Windscribe.png \
+      $installdir/usr/share/icons/hicolor/${size}x${size}/apps/windscribe.png
+  done
+
+  install -d $installdir/usr/lib/sysusers.d
+  printf '%s\n' 'g windscribe -' 'u windscribe - "Windscribe VPN service" - -' \
+    > $installdir/usr/lib/sysusers.d/windscribe.conf
+
+  install -d $installdir/usr/lib/tmpfiles.d
+  printf '%s\n' 'd /run/windscribe 0755 root windscribe -' > $installdir/usr/lib/tmpfiles.d/windscribe.conf
+  printf '%s\n' 'z /opt/windscribe/Windscribe 2755 root windscribe -' >> $installdir/usr/lib/tmpfiles.d/windscribe.conf
+
