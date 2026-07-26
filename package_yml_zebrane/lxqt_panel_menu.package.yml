@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : lxqt-menu-data
+version    : 2.2.0
+release    : 1
+source     :
+    - https://github.com/lxqt/lxqt-menu-data/releases/download/2.2.0/lxqt-menu-data-2.2.0.tar.xz : a5a026fe3a8d279551233fa399b37139a668c70b07b53ec85c23e67249ae895b
+license    : LGPL-2.1-or-later
+component  : desktop.library
+summary    : XML files for LXQt menus
+description: |
+    lxqt-menu-data provides the XML files for the LXQt menu structure, following the freedesktop.org menu specification.
+builddeps  :
+    - pkgconfig(Qt6Widgets)
+    - qt6-tools-devel
+    - lxqt-build-tools-devel
+    - qtxdg-tools-devel
+    - cmake
+setup      : |
+    mkdir build
+    cd build
+    cmake .. -DCMAKE_INSTALL_PREFIX=/usr \
+             -DCMAKE_BUILD_TYPE=Release
+build      : |
+    cd build
+    make
+install    : |
+    cd build
+    make DESTDIR=%installroot% install

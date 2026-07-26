@@ -1,0 +1,25 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : lxqt-build-tools
+version    : 2.2.1
+release    : 2
+source     :
+    - https://github.com/lxqt/lxqt-build-tools/releases/download/2.2.1/lxqt-build-tools-2.2.1.tar.xz : 13dcdf2e6b55cc334ac0ddadd0c131d46c46e06fab0d6ca7b8b96c260c8e332f
+license    : BSD-3-Clause
+component  : desktop.library
+summary    : Various packaging tools and scripts for LXQt
+description: |
+    lxqt-build-tools is a collection of various packaging tools and scripts for LXQt, required to build most of the LXQt components.
+builddeps  :
+    - pkgconfig(Qt6Core)
+    - cmake
+setup      : |
+    mkdir build
+    cd build
+    cmake .. -DCMAKE_INSTALL_PREFIX=/usr \
+             -DCMAKE_BUILD_TYPE=Release
+build      : |
+    cd build
+    make
+install    : |
+    cd build
+    make DESTDIR=%installroot% install

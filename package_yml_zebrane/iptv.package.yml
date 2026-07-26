@@ -1,0 +1,78 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : yuki-iptv
+version    : 0.0.19
+release    : 1
+source     :
+    - https://codeberg.org/liya/yuki-iptv/archive/0.0.19.tar.gz : 1bc6be13b6ba1ff6b88e2abeb1b340d70cc89061218e882daf1061719a84b40f
+homepage   : https://codeberg.org/liya/yuki-iptv
+summary    : IPTV player with EPG support
+description: |
+    yuki-iptv is a feature-rich IPTV player based on mpv. It supports M3U/XSPF/XTream
+    playlists, TV guide (EPG) in XMLTV and JTV formats, stream recording, playlist editor,
+    TV archive/catchup, channel groups and video settings per channel.
+license    : GPL-3.0-or-later
+component  : multimedia.video
+
+builddeps  :
+    - gettext
+
+rundeps    :
+    - mpv
+    - python3
+    - python-chardet
+    - python-gobject
+    - python-pillow
+    - python-pyqt6-sip
+    - python-requests
+    - python-setproctitle
+    - python-unidecode
+    - qt6-base
+
+setup      : |
+    # Brak systemu budowania — nic do roboty
+
+build      : |
+    # Kompilacja tlumaczeń .po -> .mo
+    for po in po/*.po; do
+        lang=$(basename "$po" .po)
+        mkdir -p "usr/share/locale/${lang}/LC_MESSAGES"
+        msgfmt "$po" -o "usr/share/locale/${lang}/LC_MESSAGES/yuki-iptv.mo"
+    done
+
+
+install    : |
+    # Główna biblioteka aplikacji
+    install -dm00755 $installdir/usr/lib/yuki-iptv
+    cp -r usr/lib/yuki-iptv/. $installdir/usr/lib/yuki-iptv/
+
+    # Skrypt startowy
+    install -Dm00755 usr/bin/yuki-iptv \
+        $installdir/usr/bin/yuki-iptv
+
+    # Ikony
+    for size in 16 22 32 48 64 128 256; do
+        src="usr/share/icons/hicolor/${size}x${size}/apps/yuki-iptv.png"
+        [ -f "$src" ] && install -Dm00644 "$src" \
+            "$installdir/usr/share/icons/hicolor/${size}x${size}/apps/yuki-iptv.png"
+    done
+    if [ -f usr/share/icons/hicolor/scalable/apps/yuki-iptv.svg ]; then
+        install -Dm00644 usr/share/icons/hicolor/scalable/apps/yuki-iptv.svg \
+            $installdir/usr/share/icons/hicolor/scalable/apps/yuki-iptv.svg
+    fi
+
+    # Plik .desktop
+    desktop_src="usr/share/applications/io.github.yuki_iptv.yuki-iptv.desktop"
+    [ ! -f "$desktop_src" ] && desktop_src="usr/share/applications/yuki-iptv.desktop"
+    install -Dm00644 "$desktop_src" \
+        $installdir/usr/share/applications/io.github.yuki_iptv.yuki-iptv.desktop
+
+    # AppStream metadane
+    for xml in usr/share/metainfo/*.xml usr/share/appdata/*.xml; do
+        [ -f "$xml" ] && install -Dm00644 "$xml" \
+            "$installdir/usr/share/metainfo/$(basename $xml)"
+    done
+
+    # Tłumaczenia skompilowane w build()
+    find usr/share/locale -name "*.mo" | while read mo; do
+        install -Dm00644 "$mo" "$installdir/$mo"
+    done

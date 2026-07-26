@@ -1,0 +1,42 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : budgie-session
+version    : 1.0.1
+release    : 401
+source     :
+    - https://github.com/BuddiesOfBudgie/budgie-session/releases/download/v1.0.1/budgie-session-v1.0.1.tar.xz : e6d0bf94979af5ab8aa478fd99fcd38bff51616ecdee4b36e5c9ddcb4af8f604
+
+license    : GPL-3.0-or-later
+component  : desktop.budgie
+summary    : Budgie session manager (Wayland-capable)
+description: |
+    budgie-session provides session management, session files,
+    systemd user units, and login integration required for
+    running Budgie 10.10 preview on Wayland.
+
+builddeps  :
+    - pkgconfig(xtrans)
+    - libgtk-layer-shell-devel
+    - pkgconfig(wayland-protocols)
+    - pkgconfig(libsystemd)
+    - pkgconfig(udev)
+    - pkgconfig(xdg-desktop-portal)
+    - pam-devel
+    - meson
+    - ninja
+    - libice-devel
+    - libsm-devel
+    - libgnome-desktop-devel
+    - libjson-glib-devel
+
+rundeps    :
+    - systemd
+    # - base-files (USUNIĘTE, ponieważ nie jest to znana zależność w Twoim środowisku)
+
+build: |
+    # Wyłączenie manpages, które powodowały błąd I/O (brak dostępu do sieci)
+    meson setup _build --prefix=/usr -Dman=false 
+    ninja -C _build
+install: |
+    # Ręczne przekierowanie instalacji Mesona do katalogu pakietu $installdir 
+    # (naprawia błąd 'fg: no job control' z makra %meson_install)
+    DESTDIR=$installdir meson install -C _build

@@ -1,0 +1,49 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : slick-sddm
+version    : 1.0
+release    : 5
+source     :
+    - git|https://github.com/UbuntuBudgie/slickSDDM.git : main
+license    : GPL-3.0-or-later
+summary    : Slick SDDM theme for Budgie desktop
+description: |
+    A modern SDDM login theme for Budgie, featuring display setup helpers,
+    background caching via systemd, and a GUI customization tool.
+    Requires SDDM >= 0.21.0 and Qt >= 6.5.
+component  : desktop.display-manager
+builddeps  :
+    - meson
+    - ninja
+rundeps    :
+    - sddm
+    - qt6-svg
+    - qt6-virtualkeyboard
+    - qt6-multimedia
+setup      : |
+    %patch -p0 -i $pkgfiles/fix-theme-name.patch
+    %meson_configure \
+        -Dtheme_name=solus-budgie-login \
+        -Dtheme_display_name="Solus Budgie Login" \
+        -Dtheme_description="Slick SDDM theme for Solus Budgie desktop" \
+        -Dtheme_author="Solus Team" \
+        -Dtheme_website="https://getsol.us" \
+        -Dsddm_conf_dir=share/sddm/sddm.conf.d \
+        -Ddefault_background=/usr/share/backgrounds/budgie/default.jpg
+build      : |
+    %ninja_build
+install    : |
+    %ninja_install
+
+    install -Dm0755 budgie-sddm-display-setup \
+        $installdir/usr/libexec/budgie-sddm-display-setup
+
+    install -Dm0644 systemd/sddm-backgrounds-cache.path \
+        $installdir/usr/lib/systemd/system/sddm-backgrounds-cache.path
+
+    install -Dm0644 systemd/sddm-backgrounds-cache.timer \
+        $installdir/usr/lib/systemd/system/sddm-backgrounds-cache.timer
+
+    install -Dm0644 sddm-theme/components/AccountsService.qml \
+        $installdir/usr/share/sddm/themes/solus-budgie-login/components/AccountsService.qml
+
+    %install_license LICENSE

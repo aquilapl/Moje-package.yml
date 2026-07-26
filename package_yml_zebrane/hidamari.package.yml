@@ -1,0 +1,44 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name        : hidamari
+version     : 3.6
+release     : 1
+source      :
+    - https://github.com/jeffshee/hidamari/archive/refs/tags/v3.6.tar.gz : fbfa754db13bb5bad6cecce07375bede047b3cacbc38c503ebe98e02ac418a81
+
+summary     : Video wallpaper for Linux. Written in Python.
+license     : GPL-3.0-only
+description : |
+    Video wallpaper for Linux written in Python.
+
+builddeps   :
+    - libgtk-3-devel
+    - desktop-file-utils
+    - python3
+    - meson
+    - ninja
+
+rundeps     :
+    - python-gobject
+    - python-pillow
+    - python-pydbus
+    - vlc
+    - python-requests
+    - python-setproctitle
+    - yt-dlp
+    - dconf
+    - libgnome-desktop
+    - libwnck
+    - xdg-user-dirs
+    - vdpauinfo
+    - libayatana-appindicator
+    - libwebkit-gtk41
+    - gobject-introspection
+
+build       : |
+    sed -i "s/gi.require_version('AppIndicator3', '0.1')/gi.require_version('AyatanaAppIndicator3', '0.1')/" src/menu.py
+    sed -i "s/from gi.repository import AppIndicator3/from gi.repository import AyatanaAppIndicator3/" src/menu.py
+    meson setup --prefix=/usr builddir
+    ninja -C builddir
+
+install     : |
+    DESTDIR=$installdir ninja -C builddir install

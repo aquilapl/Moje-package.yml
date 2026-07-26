@@ -1,0 +1,108 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : notepadnext
+version    : 0.13
+release    : 1
+source     :
+    - https://github.com/dail8859/NotepadNext/archive/47f45d9f1bf04090efe0df76c147e34d6be19bcd.tar.gz : 6f6a3d2ccd710952f74a2ef71bc31ef911d1bf994925c5d46024a83710667b30
+    - https://github.com/githubuser0xFFFF/Qt-Advanced-Docking-System/archive/34b68d6eab1556cf851d24e033909332771f3dfe.tar.gz : 67bb5fc633eb477317d588045b08cc6a92fb4eff15754a0b7b85f09dff3c69a0
+    - https://github.com/alex-spataru/QSimpleUpdater/archive/8e7017f7fbdc2b4b1a26ed1eef9ebcba6a50639c.tar.gz : 74d09013a05f33359217fe238b624ddc04c4bb12402ae3c4f391df2049c49cf8
+    - https://github.com/itay-grudev/SingleApplication/archive/494772e98cef0aa88124f154feb575cc60b08b38.tar.gz : e1a3625c3e60413847b1e74d2e2fabcabe5863686d26b16ee76f011f0521e535
+    - https://github.com/editorconfig/editorconfig-core-qt/archive/ab62f0554abf2bbe4d45427b36a8b2f81ca7b4ab.tar.gz : 17d305ffa59647477217ed5b36db2c2ef0a9b279a5bc4b01de0dbc7282665ceb
+license    : GPL-3.0-or-later
+component  : editor
+summary    : A cross-platform, reimplementation of Notepad++
+description: |
+    NotepadNext is a cross-platform reimplementation of Notepad++.
+    It supports syntax highlighting for many programming languages,
+    multiple tabs, regular expression search/replace, macros, and more.
+builddeps  :
+    - pkgconfig(Qt6Core)
+    - pkgconfig(Qt6Gui)
+    - pkgconfig(Qt6Widgets)
+    - pkgconfig(Qt6Network)
+    - pkgconfig(Qt6Svg)
+    - pkgconfig(Qt6PrintSupport)
+    - pkgconfig(Qt6Core5Compat)
+    - pkgconfig(Qt6WaylandClient)
+    - pkgconfig(wayland-client)
+    - pkgconfig(cups)
+    - qt6-base-devel
+    - qt6-base-private-devel
+    - qt6-wayland-devel
+    - qt6-tools-devel
+    - qt6-5compat-devel
+    - cups-devel
+    - cmake
+    - ninja
+    - git
+clang      : true
+setup      : |
+    # Ciemny motyw One Dark dla edytora i wszystkich języków
+    sed -i 's/styleSetFore(STYLE_DEFAULT, 0x000000)/styleSetFore(STYLE_DEFAULT, 0xBFB2AB)/' $workdir/src/EditorManager.cpp
+    sed -i 's/styleSetBack(STYLE_DEFAULT, 0xFFFFFF)/styleSetBack(STYLE_DEFAULT, 0x342C28)/' $workdir/src/EditorManager.cpp
+    sed -i 's/styleSetBack(STYLE_LINENUMBER, 0xE4E4E4)/styleSetBack(STYLE_LINENUMBER, 0x3A312C)/' $workdir/src/EditorManager.cpp
+    sed -i 's/styleSetFore(STYLE_LINENUMBER, 0x808080)/styleSetFore(STYLE_LINENUMBER, 0x70636B)/' $workdir/src/EditorManager.cpp
+    sed -i 's/styleSetBack(STYLE_BRACELIGHT, 0xFFFFFF)/styleSetBack(STYLE_BRACELIGHT, 0x342C28)/' $workdir/src/EditorManager.cpp
+    sed -i 's/styleSetBack(STYLE_BRACEBAD, 0xFFFFFF)/styleSetBack(STYLE_BRACEBAD, 0x342C28)/' $workdir/src/EditorManager.cpp
+    sed -i 's/styleSetBack(STYLE_INDENTGUIDE, 0xFFFFFF)/styleSetBack(STYLE_INDENTGUIDE, 0x342C28)/' $workdir/src/EditorManager.cpp
+    sed -i 's/setElementColour(SC_ELEMENT_CARET_LINE_BACK, 0xFFFFE8E8)/setElementColour(SC_ELEMENT_CARET_LINE_BACK, 0x18202020)/' $workdir/src/EditorManager.cpp
+    sed -i 's/setFoldMarginColour(true, 0xFFFFFF)/setFoldMarginColour(true, 0xFF282C34)/' $workdir/src/EditorManager.cpp
+    sed -i 's/setFoldMarginHiColour(true, 0xE9E9E9)/setFoldMarginHiColour(true, 0xFF2C313A)/' $workdir/src/EditorManager.cpp
+    sed -i 's/setElementColour(SC_ELEMENT_WHITE_SPACE, 0xFFD0D0D0)/setElementColour(SC_ELEMENT_WHITE_SPACE, 0xFF4B5263)/' $workdir/src/EditorManager.cpp
+    python3 -c "import re; f=open('$workdir/src/EditorManager.cpp'); c=f.read(); f.close(); c=c.replace('setCaretLineVisibleAlways(true);', 'setCaretLineVisibleAlways(true);' + chr(10) + '    editor->setCaretLineBack(0x51443E);'); f=open('$workdir/src/EditorManager.cpp','w'); f.write(c); f.close()"
+    # Kolory składni w plikach Lua - tła
+    for f in $workdir/src/languages/*.lua; do
+        sed -i 's/bgColor = rgb(0xFFFFFF)/bgColor = rgb(0x282C34)/g' "$f"
+        sed -i 's/bgColor = rgb(0xFFFFE8)/bgColor = rgb(0x282C34)/g' "$f"
+        sed -i 's/bgColor = rgb(0xFFFFD9)/bgColor = rgb(0x2C313A)/g' "$f"
+        sed -i 's/bgColor = rgb(0xE1FFF3)/bgColor = rgb(0x2C313A)/g' "$f"
+        sed -i 's/bgColor = rgb(0x00FFFF)/bgColor = rgb(0x2C313A)/g' "$f"
+        sed -i 's/bgColor = rgb(0xFFFF80)/bgColor = rgb(0x2C313A)/g' "$f"
+        sed -i 's/bgColor = rgb(0xC0FFC0)/bgColor = rgb(0x2C313A)/g' "$f"
+        sed -i 's/bgColor = rgb(0xEEEEFF)/bgColor = rgb(0x2C313A)/g' "$f"
+        sed -i 's/bgColor = rgb(0xFFFF00)/bgColor = rgb(0x2C313A)/g' "$f"
+        # Kolory tekstu
+        sed -i 's/fgColor = rgb(0x000000)/fgColor = rgb(0xABB2BF)/g' "$f"
+        sed -i 's/fgColor = rgb(0x008000)/fgColor = rgb(0x5C6370)/g' "$f"
+        sed -i 's/fgColor = rgb(0x007F00)/fgColor = rgb(0x5C6370)/g' "$f"
+        sed -i 's/fgColor = rgb(0x808080)/fgColor = rgb(0x98C379)/g' "$f"
+        sed -i 's/fgColor = rgb(0x808000)/fgColor = rgb(0x98C379)/g' "$f"
+        sed -i 's/fgColor = rgb(0xFF0000)/fgColor = rgb(0xD19A66)/g' "$f"
+        sed -i 's/fgColor = rgb(0x980000)/fgColor = rgb(0xD19A66)/g' "$f"
+        sed -i 's/fgColor = rgb(0x0000FF)/fgColor = rgb(0xC678DD)/g' "$f"
+        sed -i 's/fgColor = rgb(0x00007B)/fgColor = rgb(0xC678DD)/g' "$f"
+        sed -i 's/fgColor = rgb(0x000080)/fgColor = rgb(0xC678DD)/g' "$f"
+        sed -i 's/fgColor = rgb(0x8000FF)/fgColor = rgb(0xC678DD)/g' "$f"
+        sed -i 's/fgColor = rgb(0x804000)/fgColor = rgb(0x56B6C2)/g' "$f"
+        sed -i 's/fgColor = rgb(0x804040)/fgColor = rgb(0x56B6C2)/g' "$f"
+        sed -i 's/fgColor = rgb(0x0080FF)/fgColor = rgb(0x61AFEF)/g' "$f"
+        sed -i 's/fgColor = rgb(0x008080)/fgColor = rgb(0x61AFEF)/g' "$f"
+        sed -i 's/fgColor = rgb(0xFF8040)/fgColor = rgb(0xE06C75)/g' "$f"
+        sed -i 's/fgColor = rgb(0xFF8000)/fgColor = rgb(0xE06C75)/g' "$f"
+    done
+    for dep in ads QSimpleUpdater SingleApplication editorconfig_core_qt; do
+        mkdir -p $workdir/.deps/$dep
+    done
+    tar -xf $sources/34b68d6eab1556cf851d24e033909332771f3dfe.tar.gz --strip-components=1 -C $workdir/.deps/ads
+    tar -xf $sources/8e7017f7fbdc2b4b1a26ed1eef9ebcba6a50639c.tar.gz --strip-components=1 -C $workdir/.deps/QSimpleUpdater
+    tar -xf $sources/494772e98cef0aa88124f154feb575cc60b08b38.tar.gz --strip-components=1 -C $workdir/.deps/SingleApplication
+    tar -xf $sources/ab62f0554abf2bbe4d45427b36a8b2f81ca7b4ab.tar.gz --strip-components=1 -C $workdir/.deps/editorconfig_core_qt
+    for dep in ads QSimpleUpdater SingleApplication editorconfig_core_qt; do
+        cd $workdir/.deps/$dep
+        git init -q
+        git config user.email "build@solus"
+        git config user.name "build"
+        git add -A
+        git commit -q -m "import"
+        git tag 0.0.0
+        cd $workdir
+    done
+    cmake -G Ninja -S $workdir -B $workdir/solusBuildDir -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -DFETCHCONTENT_SOURCE_DIR_ADS=$workdir/.deps/ads -DFETCHCONTENT_SOURCE_DIR_QSIMPLEUPDATER=$workdir/.deps/QSimpleUpdater -DFETCHCONTENT_SOURCE_DIR_SINGLEAPPLICATION=$workdir/.deps/SingleApplication -DFETCHCONTENT_SOURCE_DIR_EDITORCONFIG_CORE_QT=$workdir/.deps/editorconfig_core_qt
+build      : |
+    ninja -C $workdir/solusBuildDir -j$(nproc)
+install    : |
+    DESTDIR=$installdir ninja -C $workdir/solusBuildDir install
+    if [ -d $installdir/usr/usr ]; then
+        cp -a $installdir/usr/usr/. $installdir/usr/
+        rm -rf $installdir/usr/usr
+    fi

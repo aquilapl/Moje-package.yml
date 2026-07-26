@@ -1,0 +1,38 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : liblxqt
+version    : 2.2.0
+release    : 1
+source     :
+    - https://github.com/lxqt/liblxqt/releases/download/2.2.0/liblxqt-2.2.0.tar.xz : 4a898b1bf059fb73102011bca79bb96d33c49c95f6d56135ef13a8e91d0a09c8
+license    : LGPL-2.1-or-later
+component  : desktop.library
+summary    : Core utility library for LXQt
+description: |
+    liblxqt is the core utility library used by all LXQt components. It provides common functionality for session management, power management, and settings.
+builddeps  :
+    - pkgconfig(Qt6Widgets)
+    - pkgconfig(Qt6DBus)
+    - pkgconfig(Qt6Xml)
+    - pkgconfig(polkit-qt6-1)
+    - pkgconfig(x11)
+    - pkgconfig(xscrnsaver)
+    - qt6-base-private-devel
+    - lxqt-build-tools-devel
+    - libqtxdg-devel
+    - kf6-kwindowsystem-devel
+    - cmake
+setup      : |
+    # Qt6::GuiPrivate jest eksportowane przez libqtxdg jako publiczna zależność —
+    # musimy upewnić się że CMake je znajdzie przed include() plików z libqtxdg
+    sed -i '/find_package(Qt6/a if(Qt6_VERSION VERSION_GREATER_EQUAL 6.10)\n  find_package(Qt6 COMPONENTS GuiPrivate REQUIRED)\nendif()' CMakeLists.txt
+
+    mkdir build
+    cd build
+    cmake .. -DCMAKE_INSTALL_PREFIX=/usr \
+             -DCMAKE_BUILD_TYPE=Release
+build      : |
+    cd build
+    make
+install    : |
+    cd build
+    make DESTDIR=%installroot% install

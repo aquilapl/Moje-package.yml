@@ -1,0 +1,39 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : whatsapp-for-linux
+version    : 1.6.0
+release    : 7
+source     :
+    - https://github.com/eneshecan/whatsapp-for-linux/archive/refs/heads/master.tar.gz : 9db670902dc62c266ca2f25a67412e4b8a3b268f5eaed8ef50931d84bcd237dc
+license    : GPL-3.0-or-later
+component  : network.im
+summary    : Unofficial WhatsApp desktop client for Linux
+description: |
+    WhatsApp for Linux is an unofficial WhatsApp desktop application written in C++ using gtkmm and WebKitGtk.
+builddeps  :
+    - pkgconfig(gtkmm-3.0)
+    - libwebkit-gtk41-devel
+    - libayatana-appindicator-devel
+    - pkgconfig(hunspell)
+    - cmake
+    - ninja
+    - gcc
+    - clang
+    - intltool
+setup      : |
+    ls -la
+
+    sed -i 's/webkit2gtk-4.0/webkit2gtk-4.1/' CMakeLists.txt || true
+
+    %patch -p1 -i $pkgfiles/0001-statusicon-left-click-opens-window.patch
+
+    cmake -B build \
+        -DCMAKE_INSTALL_PREFIX=/usr \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DCMAKE_INSTALL_LIBDIR=lib64 \
+        -G Ninja
+build      : |
+    cd build
+    ninja
+install    : |
+    cd build
+    DESTDIR=$installdir ninja install

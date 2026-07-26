@@ -1,0 +1,21 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : lxde-common
+version    : 0.99.2
+release    : 1
+source     :
+    - https://github.com/lxde/lxde-common/archive/refs/tags/0.99.2.tar.gz : f62a0a02bfa0837a91916f66336228520d54040674590d4b6dd5ad2efc4e92fd 
+license    : GPL-2.0-or-later
+component  : desktop.lxde
+summary    : Pliki konfiguracyjne i zasoby dla środowiska LXDE
+description: |
+    lxde-common zawiera domyślne skrypty startowe, ikony oraz pliki sesji, które pozwalają na uruchomienie LXDE jako pełnego środowiska graficznego.
+builddeps  :
+    - intltool
+    - gettext-devel
+setup      : |
+    ./autogen.sh
+    %configure --sysconfdir=/etc --disable-static
+build      : |
+    %make
+install    : |
+    %make_install

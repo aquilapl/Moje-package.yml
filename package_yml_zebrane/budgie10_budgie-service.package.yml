@@ -1,0 +1,58 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : budgie-desktop-services
+version    : 1.0.2
+release    : 400
+source     :
+  - https://forge.moderndesktop.dev/BuddiesOfBudgie/budgie-desktop-services/archive/1.0.2.tar.gz : 2304b2958abde6b75af678f1fd523ee6afba84c1f54d20c6eb4738415fffb799
+
+license    : GPL-3.0-or-later
+component  : desktop.budgie
+summary    : Budgie desktop services (Wayland-capable)
+description: |
+    budgie-desktop-services provides background services required
+    for running Budgie 10.10 preview on Wayland, including DBus
+    adaptors, system integration and QtWayland support.
+
+builddeps:
+    - cmake
+    - ninja
+    - gcc
+    - extra-cmake-modules
+    - qt6-base-devel
+    - qt6-wayland-devel
+    - qt6-tools-devel
+    - kwayland-devel
+    - wayland-protocols-devel
+    - toml11
+    - pkgconfig(Qt6WaylandClient)
+    - pkgconfig(Qt6Gui)
+    - pkgconfig(Qt6Core)
+    - pkgconfig(xkbcommon)
+    - qt6-base
+    - qt6-wayland
+
+rundeps:
+    - qt6-base
+    - qt6-wayland
+    - systemd
+    - wayland
+
+setup: |
+    # 1. Usuwamy restrykcyjne sprawdzanie, które blokuje budowanie
+    sed -i 's/REQUIRED components WaylandClient/COMPONENTS WaylandClient/g' CMakeLists.txt
+    
+    # 2. Ręcznie definiujemy cel Qt::WaylandClient, którego CMake nie potrafi stworzyć
+    # Wykorzystujemy ścieżkę, którą sam znalazłeś: /usr/lib64/libQt6WaylandClient.so.6
+    echo "if(NOT TARGET Qt::WaylandClient)" >> src/CMakeLists.txt
+    echo "  add_library(Qt::WaylandClient SHARED IMPORTED)" >> src/CMakeLists.txt
+    echo "  set_target_properties(Qt::WaylandClient PROPERTIES IMPORTED_LOCATION /usr/lib64/libQt6WaylandClient.so.6)" >> src/CMakeLists.txt
+    echo "endif()" >> src/CMakeLists.txt
+
+    %cmake_ninja .
+
+build: |
+    %ninja_build
+
+install: |
+    DESTDIR="$installdir" %ninja_install
+

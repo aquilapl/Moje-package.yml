@@ -1,0 +1,34 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : wlclock
+version    : 1.0.1
+release    : 1
+source     :
+    - https://git.sr.ht/~leon_plickat/wlclock/archive/v1.0.1.tar.gz : df624174a07dc381773039c230252e3364abee81831069ce66a12970311accfa
+license    : GPL-3.0
+component  : desktop
+summary    : Native Wayland analog clock using layer-shell
+description: |
+    wlclock is a minimalist analog clock widget for Wayland compositors
+    supporting the layer-shell protocol. Works perfectly on wlroots-based
+    compositors like labwc.
+builddeps  :
+    - pkgconfig(wayland-client)
+    - pkgconfig(wayland-protocols)
+    - pkgconfig(cairo)
+    - wayland-devel
+    - meson
+    - ninja
+setup      : |
+    # Wydłużenie wskazówek w pliku render.c
+    # Minutowa (mr) z 0.6 na 0.84 (tuż przed okręgiem tarczy)
+    sed -i 's/mr  = scale \* 0.6/mr  = scale * 0.84/g' src/render.c
+    
+    # Godzinowa (hr) z 0.4 na 0.65
+    sed -i 's/hr  = scale \* 0.4/hr  = scale * 0.65/g' src/render.c
+
+    %meson_configure
+build      : |
+    %ninja_build
+install    : |
+    %ninja_install
+

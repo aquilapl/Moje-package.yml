@@ -1,0 +1,31 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : appmanager
+version    : 3.6.5
+release    : 1
+source     :
+    - https://github.com/kem-a/AppManager/archive/refs/tags/v3.6.5.tar.gz : cb08b3cc48105b7b5518e5777a698da4543ed4983fac5a6cb82d61ac0507aa9c
+license    : GPL-3.0-or-later
+component  : desktop
+summary    : AppImage manager
+description: |
+    GTK/Libadwaita application for installing and managing AppImages.
+builddeps  :
+    - pkgconfig(gtk4)
+    - pkgconfig(libadwaita-1)
+    - pkgconfig(json-glib-1.0)
+    - pkgconfig(gee-0.8)
+    - pkgconfig(libsoup-3.0)
+    - desktop-file-utils
+    - vala
+    - meson
+    - ninja
+rundeps    :
+    - squashfs-tools
+setup      : |
+    %meson_configure -Dbundle_unsquashfs=false -Dbundle_dwarfs=false -Dbundle_zsync=false
+build      : |
+    %ninja_build
+install    : |
+    %ninja_install
+    %install_license LICENSE
+

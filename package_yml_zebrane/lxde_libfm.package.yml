@@ -1,0 +1,41 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : libfm
+version    : 1.3.2
+release    : 6
+source     :
+    - https://github.com/lxde/libfm/archive/refs/tags/1.3.2.tar.gz : e65aa86650879fcd6c06983164b95409b92724482191f06472c567cbd8cf5ddd
+license    : LGPL-2.1-or-later
+component  : desktop.lxde
+summary    : Core library of PCManFM
+description: |
+    Libfm provides file management functions for LXDE. This is the GTK2 version.
+builddeps  :
+    - pkgconfig(gtk+-2.0)
+    - pkgconfig(glib-2.0)
+    - libgtk-2-devel
+    - menu-cache-devel
+    - vala
+    - intltool
+    - autoconf
+    - automake
+    - libtool
+    - gtk-doc
+    - gettext-devel
+    - pkgconf-devel
+setup      : |
+    sed -i 's/static gboolean cancel()/static gboolean cancel(GFileMonitor *monitor)/' src/base/fm-dummy-monitor.c
+    sed -i 's/new_event->key\.window = g_object_ref (G_OBJECT (gtk_widget_get_window (icon_view->priv->search_entry)));/new_event->key.window = GDK_WINDOW (g_object_ref (G_OBJECT (gtk_widget_get_window (icon_view->priv->search_entry))));/' src/gtk/exo/exo-icon-view.c
+    sed -i 's/ri\.menu = g_object_ref(gtk_ui_manager_get_widget(ui, "\/popup"));/ri.menu = GTK_MENU (g_object_ref (gtk_ui_manager_get_widget (ui, "\/popup")));/' src/gtk/fm-dnd-dest.c
+    sed -i 's/fv->renderer_text = g_object_ref_sink(render);/fv->renderer_text = (FmCellRendererText*)g_object_ref_sink(render);/' src/gtk/fm-standard-view.c
+    ./autogen.sh
+    %configure --sysconfdir=/etc \
+               --with-gtk=2 \
+               --disable-static
+build      : |
+    export CFLAGS="$CFLAGS -fcommon -Wno-error=deprecated-declarations -Wno-error=incompatible-pointer-types"
+    %make
+install    : |
+    %make_install
+    rm -f $installdir/usr/lib64/libfm-extra*.so*
+    rm -f $installdir/usr/lib64/pkgconfig/libfm-extra.pc
+    rm -f $installdir/usr/include/libfm-1.0/fm-extra.h

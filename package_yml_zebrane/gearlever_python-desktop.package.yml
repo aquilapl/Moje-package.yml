@@ -1,0 +1,24 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : python-desktop-entry-lib
+version    : 5.0
+release    : 2
+source     :
+    - https://files.pythonhosted.org/packages/source/d/desktop-entry-lib/desktop_entry_lib-5.0.tar.gz : 9a621bac1819fe21021356e41fec0ac096ed56e6eb5dcfe0639cd8654914b864
+homepage   : https://codeberg.org/JakobDev/desktop-entry-lib
+license    : BSD-2-Clause
+component  : programming.python
+summary    : A library for working with .desktop files
+description: |
+    A library for working with .desktop files according to the Desktop Entry Specification
+builddeps  :
+    - tar
+rundeps    :
+    - python3
+setup      : |
+    ls -la
+    tar -tzf *.tar.gz | head -10
+build      : |
+    true
+install    : |
+    mkdir -p $installdir/usr/lib/python3.14/site-packages
+    cp -r desktop_entry_lib $installdir/usr/lib/python3.14/site-packages/

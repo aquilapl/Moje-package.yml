@@ -1,0 +1,53 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : brave-origin
+version    : 1.93.126
+release    : 5
+source     :
+    -  https://github.com/brave/brave-browser/releases/download/v1.93.126/brave-origin_1.93.126_amd64.deb : 2cfd481f55aa72df322f5a89d91aab5472d5121640e100854be464661fe9664b
+homepage   : https://brave.com/origin/linux/
+license    :
+    - GPL-2.0-or-later
+    - GPL-3.0-or-later
+    - MPL-2.0
+component  : network.web.browser
+summary    : Brave Origin — uproszczona przeglądarka bez reklam i telemetrii
+description: |
+    Brave Origin to odchudzona wersja Brave bez Rewards, Leo AI i innych
+    funkcji. Na Linuksie dostępna bezpłatnie. Może być zainstalowana
+    równolegle ze zwykłym Brave.
+patterns   : /*
+builddeps  :
+    - pkgconfig(Qt5Core)
+    - pkgconfig(Qt6Core)
+    - pkgconfig(alsa)
+    - pkgconfig(atk)
+    - pkgconfig(cups)
+    - pkgconfig(gconf-2.0)
+    - pkgconfig(libsecret-1)
+    - pkgconfig(pango)
+    - pkgconfig(xcomposite)
+    - pkgconfig(xdamage)
+    - pkgconfig(xkbcommon)
+    - pkgconfig(xkbfile)
+    - pkgconfig(xrandr)
+    - pkgconfig(xscrnsaver)
+rundeps    :
+    - libgnome-keyring
+setup      : |
+    ar x ${sources}/brave-origin_${version}_amd64.deb
+    tar xf data.tar.*
+install    : |
+    install -Ddm00755 ${installdir}
+    cp -r usr ${installdir}/
+
+    cp -r opt/brave.com/brave-origin ${installdir}/usr/share/
+
+    # Popraw symlink binarki (upstream wskazuje na /opt, my mamy w /usr/share)
+    rm ${installdir}/usr/bin/brave-origin-stable
+    ln -s /usr/share/brave-origin/brave-origin ${installdir}/usr/bin/brave-origin-stable
+
+    # Przenieś appdata → metainfo
+    install -dm00755 ${installdir}/usr/share/metainfo
+    mv ${installdir}/usr/share/appdata/brave-origin.appdata.xml \
+        ${installdir}/usr/share/metainfo/
+    rmdir ${installdir}/usr/share/appdata

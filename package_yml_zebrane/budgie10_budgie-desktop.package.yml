@@ -1,0 +1,13 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+setup      : |
+    %meson_configure
+    sed -i 's/timeout 30/timeout 180/' src/daemon/screenlock.vala
+    sed -i 's/brightness_manager.turn_off.*/debug("Wayland DPMS bypass - keeping panel alive to prevent i915 hang");/' src/daemon/screenlock.vala
+    sed -i '/public async void dim()/,/^}/c\public async void dim() throws GLib.DBusError, GLib.IOError {\nthis.is_dimming = true;\ndebug("Virtual Dim");\n}' src/daemon/screenlock.vala
+    sed -i '/public async void undim()/,/^}/c\public async void undim() throws GLib.DBusError, GLib.IOError {\nthis.is_dimming = false;\ndebug("Virtual Undim");\n}' src/daemon/screenlock.vala
+setup      : |
+    %meson_configure
+    sed -i 's/timeout 30/timeout 180/' src/daemon/screenlock.vala
+    sed -i 's/brightness_manager.turn_off.*/debug("Wayland DPMS bypass - keeping panel alive to prevent i915 hang");/' src/daemon/screenlock.vala
+    sed -i '/public async void dim()/,/^}/c\public async void dim() throws GLib.DBusError, GLib.IOError {\nthis.is_dimming = true;\ndebug("Virtual Dim");\n}' src/daemon/screenlock.vala
+    sed -i '/public async void undim()/,/^}/c\public async void undim() throws GLib.DBusError, GLib.IOError {\nthis.is_dimming = false;\ndebug("Virtual Undim");\n}' src/daemon/screenlock.vala

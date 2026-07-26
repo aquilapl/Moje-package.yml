@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : budgie-wp-volume-applet
+version    : 1.0.0
+release    : 1
+source     :
+    - https://github.com/aquilapl/wp-volume/archive/refs/tags/v1.0.0.tar.gz : 9a9abf233fe99b5dda916f4d274e5c6964ff381834be6b1c366eb79274b5112f
+license    : GPL-3.0-or-later
+component  : desktop.budgie
+summary    : Volume applet for Budgie Desktop (Wayland/Labwc)
+description: |
+    A lightweight volume applet for Budgie Desktop designed for Labwc on Wayland.
+    It uses wireplumber for audio control and gtk-layer-shell for native Wayland windows.
+builddeps  :
+    - budgie-desktop-devel
+    - libgtk-layer-shell-devel
+    - libgtk-3-devel
+    - vala
+    - meson
+    - ninja
+setup      : |
+    meson setup build
+build      : |
+    ninja -C build
+install    : |
+    DESTDIR=$installdir ninja -C build install
+

@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : libsysstat
+version    : 1.1.0
+release    : 1
+source     :
+    - https://github.com/lxqt/libsysstat/releases/download/1.1.0/libsysstat-1.1.0.tar.xz : 996e5e8c43b1364a81a660b56956948c628e919f1d73554df6be152bbec8d430
+license    : LGPL-2.1-or-later
+component  : desktop.library
+summary    : Library to query system information and statistics
+description: |
+    libsysstat is a library used by LXQt to fetch system statistics like CPU usage, memory consumption, and network traffic.
+builddeps  :
+    - pkgconfig(Qt6Widgets)
+    - lxqt-build-tools-devel
+    - cmake
+setup      : |
+    mkdir build
+    cd build
+    cmake .. -DCMAKE_INSTALL_PREFIX=/usr \
+             -DCMAKE_BUILD_TYPE=Release \
+             -DBUILD_WITH_QT6=ON
+build      : |
+    cd build
+    make
+install    : |
+    cd build
+    make DESTDIR=%installroot% install

@@ -1,0 +1,53 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : portmaster
+version    : 2.1.7
+release    : 1
+source     :
+    - https://updates.safing.io/latest/linux_amd64/packages/portmaster-installer.deb#portmaster-installer-2.1.7.deb : d9bf469fd1f3bee8aefd811e019453bc95352289b4eada746d30b92e16e68213
+license    : GPL-3.0-or-later
+component  : security
+homepage   : https://safing.io
+summary    : Open-source application firewall that monitors and controls network connections
+description: |
+    Portmaster is a free and open-source application firewall that lets you
+    monitor and control all network connections on your computer on a
+    per-application basis. It uses eBPF and nfqueue to intercept packets at
+    the kernel level without requiring kernel modules.
+
+rundeps    :
+    - libayatana-appindicator
+    - libwebkit-gtk41
+
+strip      : no
+debug      : no
+
+setup      : |
+    ar x $sources/portmaster-installer-2.1.7.deb
+    tar xf data.tar.*
+
+install    : |
+    # Program
+    install -Dm00755 $workdir/opt/safing/portmaster/portmaster-start \
+        $installdir/opt/safing/portmaster/portmaster-start
+
+    # Symlink /usr/bin/portmaster -> skrypt startowy
+    install -dm00755 $installdir/usr/bin
+    ln -sf /opt/safing/portmaster/portmaster-start $installdir/usr/bin/portmaster
+
+    # Desktop entry
+    install -Dm00644 $workdir/opt/safing/portmaster/portmaster.desktop \
+        $installdir/usr/share/applications/portmaster.desktop
+
+    # Autostart notifier
+    install -Dm00644 $workdir/opt/safing/portmaster/portmaster_notifier.desktop \
+        $installdir/etc/xdg/autostart/portmaster_notifier.desktop
+
+    # Systemd service
+    install -Dm00644 $workdir/opt/safing/portmaster/portmaster.service \
+        $installdir/usr/lib/systemd/system/portmaster.service
+
+    # Ikony
+    cp -r $workdir/usr/share/icons $installdir/usr/share/
+
+    # Katalog danych (puste mkdir)
+    install -dm00755 $installdir/var/lib/portmaster

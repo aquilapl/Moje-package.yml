@@ -1,0 +1,42 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : wf-recorder
+version    : 0.6.0
+release    : 2
+source     :
+    - https://github.com/ammen99/wf-recorder/archive/refs/tags/v0.6.0.tar.gz : 52d2c952506d63708f9a8f1aacd4d6ca176287caf3507c8ff2882fa0390cb391
+license    : MIT
+summary    : Lightweight Wayland screen recorder using PipeWire
+description: |
+    wf-recorder is a simple screen recorder for wlroots-based Wayland compositors.
+    Supports full-screen or region recording with optional audio via PipeWire/PulseAudio.
+
+builddeps  :
+    - meson
+    - ninja
+    - pkgconfig(gbm)
+    - pkgconfig(libdrm)
+    - pkgconfig(libpipewire-0.3)
+    - pkgconfig(libpulse-simple)
+    - ffmpeg-devel
+    - pkgconfig(wayland-client)
+    - pkgconfig(wayland-protocols)
+
+rundeps    :
+    - ffmpeg
+    - mesalib
+    - libdrm
+    - pipewire
+    - pulseaudio
+    - wayland
+    - wayland-protocols
+    - slurp
+
+setup      : |
+    %meson_configure
+
+build      : |
+    %ninja_build
+
+install    : |
+    %ninja_install
+

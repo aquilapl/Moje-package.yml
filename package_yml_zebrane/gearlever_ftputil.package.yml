@@ -1,0 +1,22 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : python-ftputil
+version    : 5.0.4
+release    : 2
+source     :
+    - https://files.pythonhosted.org/packages/source/f/ftputil/ftputil-5.0.4.tar.gz : 6889db8649dd20d9b6d40a6c5f0f84ccf340a7dac1e0bfc0f0024090fc2afb33
+homepage   : https://www.nongnu.org/ftputil/
+license    : BSD-3-Clause
+component  : programming.python
+summary    : High-level FTP client library
+description: |
+    ftputil is a high-level FTP client library for the Python programming language. It implements a remote file system abstraction and provides an easy-to-use interface for FTP operations.
+builddeps  :
+    - python3-devel
+rundeps    :
+    - python3
+setup      : |
+    python3 setup.py build
+build      : |
+    python3 setup.py build
+install    : |
+    python3 setup.py install --root=$installdir --prefix=/usr

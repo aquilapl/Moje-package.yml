@@ -1,0 +1,36 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : lxqt-globalkeys
+version    : 2.2.0
+release    : 1
+source     :
+    - https://github.com/lxqt/lxqt-globalkeys/releases/download/2.2.0/lxqt-globalkeys-2.2.0.tar.xz : 66cfdfeed4c0b968f4635847ccc32bec8136bb74cfbd9a5b31e0475339f9979a
+license    : LGPL-2.1-or-later
+component  : desktop.library
+summary    : LXQt daemon and library for global keyboard shortcuts
+description: |
+    lxqt-globalkeys is a daemon and a library used by LXQt for registration and handling of global keyboard shortcuts.
+builddeps  :
+    - pkgconfig(Qt6Widgets)
+    - pkgconfig(Qt6DBus)
+    - pkgconfig(Qt6Xml)
+    - lxqt-build-tools-devel
+    - libqtxdg-devel
+    - liblxqt-devel
+    - qtxdg-tools-devel
+    - kf6-kwindowsystem-devel
+    - qt6-base-private-devel
+    - cmake
+setup      : |
+    # Twoja sprawdzona metoda na GuiPrivate
+    sed -i '/find_package(Qt6/a if(Qt6_VERSION VERSION_GREATER_EQUAL 6.10)\n  find_package(Qt6 COMPONENTS GuiPrivate REQUIRED)\nendif()' CMakeLists.txt
+
+    mkdir build
+    cd build
+    cmake .. -DCMAKE_INSTALL_PREFIX=/usr \
+             -DCMAKE_BUILD_TYPE=Release
+build      : |
+    cd build
+    make
+install    : |
+    cd build
+    make DESTDIR=%installroot% install

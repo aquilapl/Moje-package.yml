@@ -1,0 +1,67 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : antigravity
+version    : 1.11.14
+release    : 1
+source     :
+    - https://edgedl.me.gvt1.com/edgedl/release2/j0qc3/antigravity/stable/1.11.14-5763785964257280/linux-x64/Antigravity.tar.gz : 983c478f4def33a68623dc07a04156404c2fe2accdd492bb2f067e3d91239e20
+license    : LicenseRef-Google-Antigravity
+component  : programming.tools
+summary    : An agentic development platform from Google, evolving the IDE into the agent-first era
+description: |
+    An agentic development platform from Google, evolving the IDE into the agent-first era. Antigravity provides an advanced code editor with AI-powered development capabilities.
+builddeps  :
+    - pkgconfig(alsa)
+    - pkgconfig(atk)
+    - pkgconfig(atspi-2)
+    - pkgconfig(cairo)
+    - pkgconfig(cups)
+    - pkgconfig(dbus-1)
+    - pkgconfig(expat)
+    - pkgconfig(glib-2.0)
+    - pkgconfig(gtk+-3.0)
+    - pkgconfig(libsystemd)
+    - pkgconfig(nspr)
+    - pkgconfig(nss)
+    - pkgconfig(pango)
+    - pkgconfig(x11)
+    - pkgconfig(xcb)
+    - pkgconfig(xcomposite)
+    - pkgconfig(xdamage)
+    - pkgconfig(xext)
+    - pkgconfig(xfixes)
+    - pkgconfig(xkbcommon)
+    - pkgconfig(xkbfile)
+    - pkgconfig(xrandr)
+    - mesalib
+rundeps    :
+    - at-spi2
+    - cups
+    - libgtk-3
+    - mesalib
+    - libnspr
+    - libnss
+install    : |
+    # Install application files
+    install -dm755 $installdir/opt/Antigravity
+    cp -a * $installdir/opt/Antigravity/
+
+    # Create binary symlink
+    install -dm755 $installdir/usr/bin
+    ln -s /opt/Antigravity/bin/antigravity $installdir/usr/bin/antigravity
+
+    # Install desktop files
+    install -Dm644 $pkgfiles/antigravity.desktop \
+        $installdir/usr/share/applications/antigravity.desktop
+    install -Dm644 $pkgfiles/antigravity-url-handler.desktop \
+        $installdir/usr/share/applications/antigravity-url-handler.desktop
+
+    # Install icon
+    install -dm755 $installdir/usr/share/pixmaps
+    ln -s /opt/Antigravity/resources/app/resources/linux/code.png \
+        $installdir/usr/share/pixmaps/antigravity.png
+
+    # Install licenses
+    install -Dm644 $installdir/opt/Antigravity/resources/app/LICENSE.txt \
+        $installdir/usr/share/licenses/antigravity/LICENSE.txt
+    install -Dm644 $installdir/opt/Antigravity/LICENSES.chromium.html \
+        $installdir/usr/share/licenses/antigravity/LICENSES.chromium.html

@@ -1,0 +1,24 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : lxappearance
+version    : 0.6.3
+release    : 10
+source     :
+    - https://downloads.sourceforge.net/lxde/lxappearance-0.6.3.tar.xz : 7222d858b8fef4b7967c42142d61e82ded6dd42dc5ef1d59caad775795928b38
+license    : GPL-2.0-or-later
+component  : desktop.lxde
+summary    : Menedżer motywów LXDE
+description: |
+    LXAppearance to lekkie narzędzie do zmiany motywów GTK+, ikon, czcionek i kursorów myszy.
+builddeps  :
+    - pkgconfig(gtk+-2.0)
+    - pkgconfig(dbus-glib-1)
+setup      : |
+    # Używamy ręcznego setupu, żeby uniknąć błędu --runstatedir, jeśli wystąpi
+    ./configure --prefix=/usr \
+                --sysconfdir=/etc \
+                --enable-dbus \
+                --enable-lxsession
+build      : |
+    %make
+install    : |
+    %make_install

@@ -1,0 +1,48 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : keepassxc-git
+version    : 2.7.11
+release    : 55
+source     :
+    - https://github.com/keepassxreboot/keepassxc/archive/refs/tags/2.7.11.tar.gz : ffde0a566d20587ef076229468631c27e62baffe0a21eb2438d374dd2e5b5148
+license    : GPL-2.0-or-later
+component  : security
+summary    : Cross-platform password manager compatible with KeePass
+description: |
+    KeePassXC development snapshot (2.8).
+
+builddeps :
+    - pkgconfig(Qt5Core)
+    - pkgconfig(Qt5Gui)
+    - pkgconfig(Qt5Widgets)
+    - pkgconfig(Qt5Svg)
+    - pkgconfig(Qt5X11Extras)
+    - qt5-tools-devel
+    - pkgconfig(xcb)
+    - pkgconfig(x11)
+    - pkgconfig(xi)
+    - pkgconfig(xtst)
+    - pkgconfig(libgcrypt)
+    - pkgconfig(libargon2)
+    - pkgconfig(libsecret-1)
+    - pkgconfig(libqrencode)
+    - pkgconfig(minizip)
+    - botan2-devel
+
+rundeps:
+  - botan2
+  - libsecret
+  - qrencode
+
+setup      : |
+    %apply_patches
+    %cmake_ninja \
+        -DWITH_XC_AUTOTYPE=ON \
+        -DWITH_XC_BROWSER=ON \
+        
+
+build      : |
+    %ninja_build
+
+install    : |
+    %ninja_install
+

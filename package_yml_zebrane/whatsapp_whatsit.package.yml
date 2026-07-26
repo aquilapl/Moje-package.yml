@@ -1,0 +1,32 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : whatsit
+version    : 5.0.0
+release    : 1
+source     :
+    - https://github.com/devlinman/whatsit/archive/refs/tags/v5.0.0.tar.gz : ff5662da5e53fb0a3bbb2e87a2c72203d6e9cb68545ecb92d41e5280ec673581
+license    : GPL-3.0-or-later
+component  : network.im
+summary    : Lekki klient WhatsApp Web oparty na Qt6 i KF6
+description: |
+    Modern, fast and light-weight WhatsApp Web client built using Qt6, KF6 and QtWebEngine.
+builddeps  :
+    - qt6-webengine-devel
+    - qt6-base-devel
+    - qt6-declarative-devel
+    - extra-cmake-modules
+    - kf6-kcoreaddons-devel
+    - kf6-kconfig-devel
+    - kf6-knotifications-devel
+    - kf6-knotifyconfig-devel
+    - kf6-kstatusnotifieritem-devel
+    - kf6-kxmlgui-devel
+    - kf6-kdbusaddons-devel
+    - cups-devel
+    - libx11-devel
+    - cmake
+setup      : |
+    %cmake
+build      : |
+    %make
+install    : |
+    %make_install

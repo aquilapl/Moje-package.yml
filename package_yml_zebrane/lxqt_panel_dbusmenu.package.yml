@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : dbusmenu-lxqt
+version    : 0.3.0
+release    : 2
+source     :
+    - https://github.com/lxqt/libdbusmenu-lxqt/releases/download/0.3.0/libdbusmenu-lxqt-0.3.0.tar.xz : ada0d14d3a4d9fb0ba344bf078d351046dfd226da1096f866d78167a79243ff9
+license    : LGPL-2.1-or-later
+component  : desktop.library
+summary    : Implementacja protokołu DBusMenu dla LXQt (Qt6)
+description: |
+    Biblioteka niezbędna do działania zasobnika systemowego (tray) w lxqt-panel 2.2.0.
+builddeps  :
+    - pkgconfig(Qt6Widgets)
+    - pkgconfig(Qt6DBus)
+    - lxqt-build-tools-devel
+    - cmake
+    - qt6-base-devel
+setup      : |
+    %cmake_ninja
+build      : |
+    %ninja_build
+install    : |
+    %ninja_install

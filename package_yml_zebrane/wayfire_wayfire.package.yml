@@ -1,0 +1,66 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : wayfire
+version    : 0.10.1
+release    : 5
+source     :
+    - git|https://github.com/WayfireWM/wayfire.git : master
+license    : MIT
+component  : desktop.wayland
+summary    : 3D Wayland compositor
+description: |
+    Wayfire is a 3D Wayland compositor inspired by Compiz.
+
+# WYŁĄCZENIE AUTOMATYCZNEGO PODZIAŁU NA DEVEL
+# To jest kluczowe, aby eopkg nie tworzyło dwóch sprzecznych pakietów.
+libsplit   : false
+
+builddeps:
+  - meson
+  - ninja
+  - wlroots-devel
+  - glm
+  - libevdev-devel
+  - libxml2-devel
+  - libcairo-devel
+  - pango-devel
+  - pixman-devel
+  - libxkbcommon-devel
+  - wayland-protocols-devel
+  - wayland-devel
+  - libinput-devel
+  - vulkan-devel
+  - egl-gbm-devel
+  - libjpeg-turbo-devel
+  - libpng-devel
+  - nlohmann-json
+  - doxygen
+  - yyjson-devel
+
+rundeps:
+  - wlroots
+  - libevdev
+  - libxml2
+  - libcairo
+  - pango
+  - pixman
+  - libxkbcommon
+  - wayland
+  - vulkan
+  - mesalib
+  - libjpeg-turbo
+  - libpng
+  - xorg-xwayland
+  - libinput
+
+setup      : |
+    # Fix missing algorithm header in wf-config
+    sed -i '1i #include <algorithm>' subprojects/wf-config/src/file.cpp
+    # Fix missing cstdint header in object.hpp
+    sed -i '1i #include <cstdint>' src/api/wayfire/object.hpp
+    %meson_configure
+
+build      : |
+    %ninja_build
+
+install    : |
+    %ninja_install

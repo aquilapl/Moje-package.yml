@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : volumeicon
+version    : 0.5.1
+release    : 7
+source     :
+    - https://github.com/Maato/volumeicon/archive/refs/tags/0.5.1.tar.gz : 607979f316e6837eb7c65837c71b213a7dc6a2091153504f7b177a1d67f3da71
+license    : GPL-3.0-or-later
+component  : desktop.util
+summary    : Lekka ikona głośności dla zasobnika systemowego
+description: |
+    Lekka aplikacja do sterowania głośnością. Wersja z ręcznie dodanymi zasobami ikon i interfejsu GUI.
+builddeps  :
+    - pkgconfig(gtk+-2.0)
+    - pkgconfig(libnotify)
+    - libgtk-2-devel
+    - alsa-lib-devel
+    - gettext-devel
+    - intltool
+setup      : |
+    ./autogen.sh
+    %configure --with-gtk2
+build      : |
+    %make
+install    : |
+    %make_install
+    install -dm00755 $installdir/usr/share/volumeicon/icons
+    install -dm00755 $installdir/usr/share/volumeicon/gui
+    cp -R data/icons/* $installdir/usr/share/volumeicon/icons/
+    cp data/gui/preferences.ui $installdir/usr/share/volumeicon/gui/
+    cp data/gui/appicon.svg $installdir/usr/share/volumeicon/gui/

@@ -1,0 +1,52 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : lxqt-panel
+version    : 2.2.0
+release    : 3
+source     :
+    - https://github.com/lxqt/lxqt-panel/releases/download/2.2.0/lxqt-panel-2.2.0.tar.xz : e5011840140fe1c06cfe4deadbb1a88c0395b33d274c2a68d7e657b6622f1adb
+license    : LGPL-2.1-or-later
+component  : desktop.library
+summary    : Główny panel środowiska LXQt (wersja Qt6)
+description: |
+    Główny panel LXQt z obsługą traya (StatusNotifier) dla aplikacji Qt6/Wayland.
+builddeps  :
+    - pkgconfig(Qt6Widgets)
+    - pkgconfig(Qt6DBus)
+    - pkgconfig(Qt6Xml)
+    - pkgconfig(Qt6Svg)
+    - pkgconfig(x11)
+    - pkgconfig(xkbcommon)
+    - pkgconfig(xcb-util)
+    - pkgconfig(xcb-image)
+    - pkgconfig(xtst)
+    - pkgconfig(dbusmenu-lxqt)
+    - pkgconfig(wayland-client)
+    - alsa-lib-devel
+    - cmake
+    - kf6-kwindowsystem-devel
+    - kf6-solid-devel
+    - layer-shell-qt-devel
+    - liblxqt-devel
+    - libqtxdg-devel
+    - libstatgrab-devel
+    - libsysstat-devel
+    - lm_sensors-devel
+    - lxqt-build-tools-devel
+    - lxqt-globalkeys-devel
+    - lxqt-menu-data-devel
+    - pulseaudio-devel
+    - qt6-base-devel
+    - qt6-base-private-devel
+    - qt6-linguist
+    - qt6-wayland-devel
+    - wayland-devel
+setup      : |
+    sed -i '/find_package(Qt6/a if(Qt6_VERSION VERSION_GREATER_EQUAL 6.10)\n  find_package(Qt6 COMPONENTS GuiPrivate REQUIRED)\nendif()' CMakeLists.txt
+
+    %cmake_ninja -DPULL_TRANSLATIONS=OFF \
+                 -DCHECK_TRANSLATIONS=OFF \
+                 -DWITH_STATUSNOTIFIER=ON
+build      : |
+    %ninja_build
+install    : |
+    %ninja_install

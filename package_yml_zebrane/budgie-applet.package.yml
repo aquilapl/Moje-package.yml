@@ -1,0 +1,33 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : budgie-network-applet
+version    : 2.2
+release    : 1
+source     :
+    - https://github.com/danielpinto8zz6/budgie-network-applet/archive/refs/tags/2.2.tar.gz : 96439cf43cc22240307235e7b61403d8225eb57a519aa2e9d916da08162cca12
+
+license    : GPL-3.0-or-later
+component  : desktop.budgie
+summary    : Network Applet for the Budgie Desktop
+description: |
+    A simple Budgie panel applet for managing network connections.
+
+builddeps  :
+    - pkgconfig(gtk+-3.0)
+    - pkgconfig(libnm)
+    - pkgconfig(libnma)
+    - pkgconfig(gee-0.8)
+    - pkgconfig(budgie-2.0)
+    - vala
+    - meson
+    - ninja
+
+setup      : |
+    sed -i 's/budgie-1.0/budgie-2.0/g' src/meson.build
+    %meson_configure
+
+build      : |
+    %ninja_build
+
+install    : |
+    %ninja_install
+

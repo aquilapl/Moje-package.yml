@@ -1,0 +1,58 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : lxsession
+version    : 0.5.5
+release    : 7
+source     :
+    - https://github.com/lxde/lxsession/archive/refs/tags/0.5.5.tar.gz : 03fbf5a58cfc5b037f2686b33cbfc643ded6ba24b18e8eb26889c27bfbd4d7be
+license    : GPL-2.0-or-later
+component  : desktop.lxde
+summary    : Lightweight session manager for LXDE
+description: |
+    LXSession is the standard session manager used by LXDE. It is capable of automatically starting a set of applications and setting up a working desktop environment.
+builddeps  :
+    - pkgconfig(gtk+-2.0)
+    - libgtk-2-devel
+    - dbus-devel
+    - polkit-devel
+    - libx11-devel
+    - intltool
+    - gettext-devel
+    - pkgconf-devel
+    - vala
+setup      : |
+    ./autogen.sh
+    %configure --sysconfdir=/etc \
+               --enable-gtk \
+               --with-gtk=2 \
+               --disable-static
+    find . -name "Makefile" -exec sed -i 's/xsettings-ager/xsettings-manager/g' {} \;
+    sed -i 's/ man / /' Makefile
+    sed -i 's/ man$/ /' Makefile
+    sed -i 's/show_msg(data->dlg,/show_msg(GTK_WINDOW(data->dlg),/g' lxpolkit/lxpolkit-listener.c
+    sed -i 's/gtk_entry_set_text(data->request,/gtk_entry_set_text(GTK_ENTRY(data->request),/g' lxpolkit/lxpolkit-listener.c
+    sed -i 's/gtk_entry_get_text(data->request)/gtk_entry_get_text(GTK_ENTRY(data->request))/g' lxpolkit/lxpolkit-listener.c
+    sed -i 's/gtk_entry_set_visibility(data->request,/gtk_entry_set_visibility(GTK_ENTRY(data->request),/g' lxpolkit/lxpolkit-listener.c
+    sed -i 's/gtk_label_set_text(data->request_label,/gtk_label_set_text(GTK_LABEL(data->request_label),/g' lxpolkit/lxpolkit-listener.c
+    sed -i 's/on_user_changed(data->id,/on_user_changed(GTK_COMBO_BOX(data->id),/g' lxpolkit/lxpolkit-listener.c
+    sed -i 's/gtk_combo_box_set_model(data->id,/gtk_combo_box_set_model(GTK_COMBO_BOX(data->id),/g' lxpolkit/lxpolkit-listener.c
+    sed -i 's/gtk_combo_box_set_active(data->id,/gtk_combo_box_set_active(GTK_COMBO_BOX(data->id),/g' lxpolkit/lxpolkit-listener.c
+    sed -i 's/g_simple_async_result_new(listener,/g_simple_async_result_new(G_OBJECT(listener),/g' lxpolkit/lxpolkit-listener.c
+build      : |
+    export CFLAGS="$CFLAGS -Wno-error=incompatible-pointer-types -Wno-error=deprecated-declarations"
+    make
+install    : |
+    %make_install
+
+packages   :
+    - name: lxsession
+      files:
+          - /usr/bin/
+          - /usr/share/
+          - /etc/
+
+    - name: lxsession-devel
+      summary: Development files for lxsession
+      description: Development files for lxsession, required by lxappearance.
+      files:
+          - /usr/include/
+          - /usr/lib64/pkgconfig/

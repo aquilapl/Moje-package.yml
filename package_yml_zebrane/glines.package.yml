@@ -1,0 +1,46 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : five-or-more
+version    : 48.1
+release    : 2
+source     :
+    - https://gitlab.gnome.org/GNOME/five-or-more/-/archive/main/five-or-more-main.tar.gz : 53479407e630b9f8c7553fe406741e2b60463b81475106a07fc35c7c4997bd80
+
+homepage   : https://gitlab.gnome.org/GNOME/five-or-more
+license    : GPL-2.0-or-later
+component  : games.puzzle
+summary    : Kulki – układaj linie 5 lub więcej
+description: |
+    Klasyczna gra GNOME (Five or More).
+
+builddeps  :
+    - libgtk-3-devel
+    - glib2-devel
+    - libgee-devel
+    - libgnome-games-support-1-devel
+    - librsvg-devel
+    - vala
+    - meson
+    - ninja
+    - itstool
+    - gettext
+    - gobject-introspection-devel
+
+rundeps    :
+    - libgtk-3
+    - libgee
+    - libgnome-games-support-1
+
+setup      : |
+    # Gra wymaga libgnome-games-support-1 (GTK3).
+    # Przywracamy oryginalną nazwę zależności meson (wersja -1).
+    sed -i "s/'libgnome-games-support[^']*'/'libgnome-games-support-1'/g" meson.build
+
+    meson setup build \
+        --prefix=/usr \
+        --buildtype=release
+
+build      : |
+    ninja -C build
+
+install    : |
+    DESTDIR=$installdir ninja -C build install

@@ -1,0 +1,67 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : megasync
+version    : 6.2.2
+release    : 4
+source     :
+    - https://mega.nz/linux/repo/xUbuntu_25.10/amd64/megasync_6.2.2-1.1_amd64.deb : 10dcdbdda87b4cf15e6ee33b0e6950da66608e15195229e357ea14df1210e6d0
+license    : © MEGA 2020 All rights reserved
+strip      : no
+component  : network.clients
+summary    : Sync your files to your Mega account.
+description: |
+    Easy automated syncing between your computers and your MEGA cloud drive
+builddeps  :
+    - pkgconfig(gl)
+    - pkgconfig(libcares)
+    - pkgconfig(libcurl)
+    - pkgconfig(libmediainfo)
+    - pkgconfig(libsodium)
+    - pkgconfig(libuv)
+    - pkgconfig(Qt5Core)
+    - pkgconfig(Qt5Svg)
+    - pkgconfig(Qt5UiTools)
+    - pkgconfig(Qt5WaylandClient)
+    - pkgconfig(sqlite3)
+    - pkgconfig(zlib)
+    - libicu-devel
+    - cryptopp-devel
+rundeps    :
+    - cryptopp
+    - libicu
+    - freeimage
+    - libsodium
+    - libraw
+    - libraw-utils
+    - qt5-x11extras
+    - qt5-wayland
+    - qt5-base
+    - qt5-declarative
+    - qt5-graphicaleffects
+    - qt5-quickcontrols
+    - qt5-quickcontrols2
+setup      : |
+    # AKTUALIZACJA v6.2.2: Dodano brakujące Qt5 runtime zależności
+    # Rozwiązuje: QSocketNotifier, Qt modules missing, segfault
+    ar xf $sources/megasync*
+    tar xf data.tar*
+install    : |
+    mkdir -p $installdir
+    cp -R etc $installdir/etc/
+    cp -R usr $installdir/usr/
+    cp -R opt $installdir/opt/
+    
+    # Wrapper script dla Wayland z fallback do X11
+    if [ -f $installdir/usr/bin/megasync ]; then
+        mv $installdir/usr/bin/megasync $installdir/usr/bin/megasync.bin
+        cat > $installdir/usr/bin/megasync << 'EOFWRAPPER'
+    #!/bin/bash
+    # Próbuj Wayland jeśli dostępny, w przeciwnym razie użyj X11
+    if [ "$XDG_SESSION_TYPE" = "wayland" ] && [ -n "$WAYLAND_DISPLAY" ]; then
+        export QT_QPA_PLATFORM=wayland
+        export QT_WAYLAND_FORCE_DPI=physical
+        export QT_WAYLAND_DISABLE_WINDOWDECORATION=0
+    fi
+    exec /usr/bin/megasync.bin "$@"
+    EOFWRAPPER
+        chmod +x $installdir/usr/bin/megasync
+    fi

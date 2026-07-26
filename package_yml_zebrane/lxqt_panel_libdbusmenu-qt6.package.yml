@@ -1,0 +1,22 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : libdbusmenu-qt6
+version    : 0.9.3
+release    : 1
+source     :
+    - https://github.com/KDE/libdbusmenu-qt/archive/refs/tags/0.9.3.tar.gz : 0019dfc4b32d63c1392aa264aed2253c1e0c2fb09216f8e2cc269bbfb8bb49b5
+license    : LGPL-2.1-or-later
+component  : desktop.library
+summary    : Qt6 implementation of the DBusMenu protocol
+description: |
+    This library provides a Qt6 implementation of the DBusMenu protocol, which is required by LXQt Panel to display status icons from applications like Discord or WhatsApp.
+builddeps  :
+    - pkgconfig(Qt6Widgets)
+    - pkgconfig(Qt6DBus)
+    - cmake
+    - extra-cmake-modules
+setup      : |
+    %cmake_ninja -DKDE_QT_VERSION=6
+build      : |
+    %ninja_build
+install    : |
+    %ninja_install

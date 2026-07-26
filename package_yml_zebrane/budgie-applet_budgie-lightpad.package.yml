@@ -1,0 +1,32 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : budgie-lightpad-applet
+version    : 0.0.2
+release    : 1
+source     :
+    - https://github.com/UbuntuBudgie/budgie-lightpad-applet/archive/refs/tags/v0.0.2.tar.gz : b4da661b0961f313367a9a01023a1f4413dacf35ea800afa7812fe88ae96af6d
+license    : GPL-3.0-or-later
+component  : desktop.budgie
+summary    : Budgie Lightpad applet - application launcher
+description: |
+    Budgie Lightpad is a modern, stylish application launcher applet for the Budgie desktop environment. It provides a clean grid-based interface for launching applications.
+builddeps  :
+    - budgie-desktop-devel
+    - pkgconfig(libpeas-2)
+    - pkgconfig(gtk+-3.0)
+    - pkgconfig(glib-2.0)
+    - pkgconfig(gio-2.0)
+    - vala
+    - meson
+rundeps    :
+    - budgie-desktop
+    - lightpad
+setup      : |
+    sed -i "s/dependency('budgie-1.0')/dependency('budgie-2.0')/g" meson.build
+    sed -i "s/dependency('libpeas-gtk-1.0')/dependency('libpeas-2')/g" meson.build
+    sed -i 's/"view-grid-symbolic"/"start"/g' src/*.vala
+    sed -i 's/Gtk.IconSize.MENU/Gtk.IconSize.LARGE_TOOLBAR/g' src/*.vala
+    %meson_configure
+build      : |
+    %ninja_build
+install    : |
+    %ninja_install

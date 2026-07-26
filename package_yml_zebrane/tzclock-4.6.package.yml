@@ -1,0 +1,24 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : tzclock
+version    : 4.7
+release    : 1
+source     :
+    - https://theknight.co.uk/releases/Source/tzclock-4.7.tar.bz2: ff9fe076ab306c8ebb68bbe4797726f24a67b8cd5fddb926f745c38b0d136cce 
+homepage   : https://theknight.co.uk
+license    : GPL-3.0-only
+summary    : Cairo clock to display the time around the world
+description: |
+    TZClock is a Cairo-based clock application that displays the time around the world.
+    It provides a graphical interface to view the current time in different time zones.
+
+builddeps  :
+    - libgtk-3-devel
+    - libnotify-devel
+    - libdial-devel
+build      : |
+    ./configure --prefix=/usr
+    %make
+
+install    : |
+    %make_install
+

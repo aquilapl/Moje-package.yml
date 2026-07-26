@@ -1,0 +1,32 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : nemo-preview
+version    : 6.6.0
+release    : 3
+source     :
+    - https://github.com/linuxmint/nemo-extensions/archive/refs/tags/6.6.0.tar.gz : ab610011ea77b00ba760fd151546f271ac92b525fcf1e4b603fbf46b85c3be30
+license    : GPL-2.0-or-later
+summary    : Quick file previewer for Nemo
+description: |
+    Nemo-preview is a DBus-activated service providing quick file previews
+    in the Nemo file manager. Supports documents, PDFs, audio, video and text.
+builddeps  :
+    - pkgconfig(gobject-introspection-1.0)
+    - pkgconfig(gtk+-3.0)
+    - pkgconfig(clutter-1.0)
+    - pkgconfig(clutter-gst-3.0)
+    - pkgconfig(clutter-gtk-1.0)
+    - pkgconfig(webkit2gtk-4.1)
+    - pkgconfig(gtksourceview-4)
+    - pkgconfig(libmusicbrainz5)
+    - cjs-devel
+    - xreader-devel
+setup      : |
+    cd nemo-preview
+    meson setup --prefix /usr --buildtype=plain --libdir=lib64 --sysconfdir=/etc --localstatedir=/var solusBuildDir
+build      : |
+    cd nemo-preview
+    %ninja_build
+install    : |
+    cd nemo-preview
+    %ninja_install
+    sed -i 's|#!/bin/sh|#!/bin/sh\nexport GDK_BACKEND=x11|' %installroot%/usr/bin/nemo-preview

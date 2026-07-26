@@ -1,0 +1,39 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : libqtxdg
+version    : 4.2.0
+release    : 2
+source     :
+    - https://github.com/lxqt/libqtxdg/releases/download/4.2.0/libqtxdg-4.2.0.tar.xz : a5d430218550d66fa806debce7c418db41268286b17bdab46b8ce3a58f0fe82a
+license    : LGPL-2.1-or-later
+component  : desktop.library
+summary    : Qt implementation of Freedesktop.org XDG specifications
+description: |
+    libqtxdg is a Qt implementation of Freedesktop.org XDG specifications, like desktop entry, icon theme, and mime type.
+builddeps  :
+    - pkgconfig(Qt6Widgets)
+    - pkgconfig(Qt6Xml)
+    - pkgconfig(Qt6DBus)
+    - pkgconfig(Qt6Svg)
+    - qt6-base-private-devel
+    - lxqt-build-tools-devel
+    - cmake
+    - file-devel
+setup      : |
+    # Qt 6.10 wymaga jawnego linkowania z GuiPrivate — patch wzorowany na Arch Linux
+    %patch -p1 -i $pkgfiles/qt-6.10.patch
+
+    # Obniżamy wymaganą wersję lxqt2-build-tools do tej dostępnej w systemie (2.1.0)
+    sed -i 's/find_package(lxqt2-build-tools "[0-9.]*/find_package(lxqt2-build-tools "2.1.0/' CMakeLists.txt
+
+    mkdir build
+    cd build
+    cmake .. -DCMAKE_INSTALL_PREFIX=/usr \
+             -DCMAKE_BUILD_TYPE=Release \
+             -DQTXDGX_ICONLOADER=ON \
+             -DBUILD_WITH_QT6=ON
+build      : |
+    cd build
+    make
+install    : |
+    cd build
+    make DESTDIR=%installroot% install

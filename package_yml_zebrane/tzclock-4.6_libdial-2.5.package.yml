@@ -1,0 +1,24 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : libdial
+version    : 2.6
+release    : 1
+source     :
+    - https://theknight.co.uk/releases/Source/libdial-2.6.tar.bz2 : 4639779bdf735dfda0755f22ddb7519ba8417813232e583a49f7a8fa01364d60
+homepage   : https://example.com/libdial
+license    : GPL-3.0-only
+summary    : Dial library for TZClock
+description: |
+    libdial is a library providing dial functionality for TZClock.
+    It offers APIs to handle time zone conversions and other related tasks.
+
+builddeps  :
+    - gcc
+    - make
+    - libgtk-3-devel
+build      : |
+    ./configure --prefix=/usr
+    make
+
+install    : |
+    make install DESTDIR=$installdir
+

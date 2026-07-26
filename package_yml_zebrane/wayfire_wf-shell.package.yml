@@ -1,0 +1,43 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : wf-shell
+version    : 0.10.0
+release    : 1
+
+source     :
+    - https://github.com/WayfireWM/wf-shell/releases/download/v0.10.0/wf-shell-0.10.0.tar.xz : 49a7fc861849051a3be5de353e3d7442a37170c990a3ffd8d83b67a369edca93
+
+license    : MIT
+component  : desktop.wayland
+
+summary    : GTK3-based panel for Wayfire
+
+description: |
+    Collection of desktop components for Wayfire compositor.
+
+builddeps  :
+    - libgtkmm-3-devel
+    - wayland-devel
+    - wayland-protocols-devel
+    - libxkbcommon-devel
+    - wayfire-devel
+    - libgtk-layer-shell-devel
+    - pulseaudio-devel
+    - libdbusmenu-devel
+    - alsa-lib-devel
+    - meson
+    - ninja
+
+rundeps    :
+    - libgtkmm-3
+    - wayland
+    - wayfire
+    - libgtk-layer-shell
+    - pulseaudio
+    - libdbusmenu
+
+build      : |
+    %meson_configure --prefix=/usr --buildtype=release -Dpulse=enabled -Dwayland-logout=false
+    %ninja_build
+
+install    : |
+    %ninja_install

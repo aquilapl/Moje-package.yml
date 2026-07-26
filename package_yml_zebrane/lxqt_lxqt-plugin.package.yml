@@ -1,0 +1,37 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : lxqt-qtplugin
+version    : 2.2.0
+release    : 1
+source     :
+    - https://github.com/lxqt/lxqt-qtplugin/archive/refs/tags/2.2.0.tar.gz : be57b0ec8cf0a07f2221696cb967132f9ee7f751f5d08670c48f8897797ad960
+license    : LGPL-2.1-or-later
+component  : desktop.library
+summary    : LXQt Qt6 Platform Integration Plugin
+description: |
+    lxqt-qtplugin is a platform integration plugin for Qt6 that makes Qt6 applications adopt LXQt settings.
+builddeps  :
+    - qt6-base-devel
+    - qt6-base-private-devel
+    - qt6-tools-devel
+    - liblxqt-devel
+    - libqtxdg-devel
+    - libfm-qt-devel           # Dodane przez Ciebie
+    - dbusmenu-lxqt-devel
+    - lxqt-build-tools-devel
+    - cmake
+    - ninja
+setup      : |
+    # Naprawa błędu Qt6::GuiPrivate poprzez wstrzyknięcie zależności
+    sed -i '/find_package(Qt6/a if(Qt6_VERSION VERSION_GREATER_EQUAL 6.10)\n  find_package(Qt6 COMPONENTS GuiPrivate REQUIRED)\nendif()' CMakeLists.txt
+
+    mkdir build
+    cd build
+    cmake .. -G Ninja \
+        -DCMAKE_INSTALL_PREFIX=/usr \
+        -DCMAKE_BUILD_TYPE=Release
+build      : |
+    cd build
+    ninja
+install    : |
+    cd build
+    DESTDIR=%installroot% ninja install

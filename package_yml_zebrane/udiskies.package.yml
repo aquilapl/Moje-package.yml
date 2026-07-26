@@ -1,0 +1,32 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name        : udiskie
+version     : 2.6.2
+release     : 1
+source      :
+    - https://github.com/coldfix/udiskie/archive/refs/tags/v2.6.2.tar.gz : 9d758efd4e3706ce824e693708cce1e0a840dae9aa5b130e3592d3588da8279c
+homepage    : https://github.com/coldfix/udiskie
+license     : MIT
+component   : system.utils
+summary     : Removable disk auto-mounter for udisks2 with tray icon
+description : |
+    udiskie is a udisks2 front-end written in python, managed from userspace, which will automatically mount pluggable devices like USB flashes or optical discs (CD/DVD).
+builddeps   :
+    - pkgconfig(pygobject-3.0)
+    - python-build
+    - python-installer
+    - python-packaging
+    - python-setuptools
+    - python-toml
+    - python-wheel
+rundeps     :
+    - libgudev
+    - python3-dbus
+    - python-docopt
+    - python-gobject
+    - python-setuptools
+    - udisks
+build       : |
+    python3 -m build --wheel --no-isolation
+install     : |
+    python3 -m installer --destdir=$installdir dist/*.whl
+    %install_license COPYING

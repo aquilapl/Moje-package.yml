@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : budgie-bluetooth-manager
+version    : 0.1
+release    : 3
+source     :
+    - git|https://github.com/dcristob/budgie-bluetooth-manager.git : main
+
+homepage   : https://github.com/dcristob/budgie-bluetooth-manager
+license    : GPL-3.0-or-later
+component  : desktop.budgie
+summary    : Bluetooth manager for Budgie desktop
+description: |
+    Bluetooth manager integration for Budgie desktop.
+
+builddeps  :
+    - pkgconfig(gtk+-3.0)
+    - pkgconfig(budgie-3.0)
+    - libpeas-2-devel
+    - meson
+    - ninja
+
+setup: |
+    %patch -p1 -i $pkgfiles/wayland-popover.patch
+    meson setup build --prefix=/usr --libdir=lib64
+
+build: |
+    ninja -C build
+
+install: |
+    DESTDIR=$installdir ninja -C build install

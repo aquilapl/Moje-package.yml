@@ -1,0 +1,40 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : libgnome-games-support-1
+version    : 1.8.2
+release    : 1
+source     :
+    - https://download.gnome.org/sources/libgnome-games-support/1.8/libgnome-games-support-1.8.2.tar.xz : 28434604a7b038731ac0231731388ff104f565bb2330cc24e78cda04cfd3ef7d
+
+homepage   : https://gitlab.gnome.org/GNOME/libgnome-games-support
+license    : LGPL-3.0-or-later
+component  : games.library
+summary    : Wspólny kod biblioteki dla gier GNOME (GTK3, wersja 1.x)
+description: |
+    Mała biblioteka przeznaczona do wewnętrznego użytku przez gry GNOME.
+    Wersja 1.x oparta na GTK3 – wymagana przez gry, które nie zostały
+    jeszcze przeportowane na GTK4 (np. five-or-more, atomix, tali).
+
+builddeps  :
+    - libgtk-3-devel
+    - glib2-devel
+    - libgee-devel
+    - vala
+    - meson
+    - ninja
+    - gobject-introspection-devel
+
+rundeps    :
+    - libgtk-3
+    - libgee
+
+setup      : |
+    meson setup build \
+        --prefix=/usr \
+        --libdir=/usr/lib64 \
+        --buildtype=release
+
+build      : |
+    ninja -C build
+
+install    : |
+    DESTDIR=$installdir ninja -C build install

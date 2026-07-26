@@ -1,0 +1,34 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : wf-config
+version    : 0.10.0
+release    : 1
+
+source     :
+    - https://github.com/WayfireWM/wf-config/releases/download/v0.10.0/wf-config-0.10.0.tar.xz : 9676f08248aaf83b91ecce5c953326c4341084b6efa00d3757a936617a51e487
+
+license    : MIT
+component  : desktop.wayland
+
+summary    : Configuration file management library for Wayfire
+description: |
+    Configuration file management library for Wayfire compositor.
+builddeps  :
+    - glm
+    - libevdev-devel
+    - libxml2-devel
+    - meson
+    - ninja
+
+rundeps    :
+    - libevdev
+    - libxml2
+
+build      : |
+    %meson_configure --prefix=/usr --buildtype=release
+    %ninja_build
+
+install    : |
+    %ninja_install
+
+check      : |
+    true

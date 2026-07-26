@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : libstatgrab
+version    : 0.92.1
+release    : 1
+source     :
+    - https://ftp.i-scream.org/pub/i-scream/libstatgrab/libstatgrab-0.92.1.tar.gz : 5688aa4a685547d7174a8a373ea9d8ee927e766e3cc302bdee34523c2c5d6c11
+license    : LGPL-2.1-or-later
+component  : desktop.library
+summary    : Library to provide useful system statistics
+description: |
+    libstatgrab is a library that provides a common interface to system statistics such as CPU usage, memory utilization, and disk I/O.
+builddeps  :
+    - pkgconfig(ncurses)
+setup      : |
+    %configure --disable-static
+build      : |
+    %make
+install    : |
+    %make_install

@@ -1,0 +1,48 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : libfm-qt
+version    : 2.2.0
+release    : 1
+source     :
+    - https://github.com/lxqt/libfm-qt/archive/refs/tags/2.2.0.tar.gz : 633a93fd3e92d30bfcc9a105676a405f72a987e451db3cc3b9be2157c5440179
+license    : LGPL-2.1-or-later
+component  : desktop.library
+summary    : Core library for PCManFM-Qt (Qt6)
+description: |
+    libfm-qt 2.2.0 is the core library for the PCManFM-Qt file manager and the LXQt desktop, fully optimized for Qt6.
+builddeps  :
+    - pkgconfig(Qt6Widgets)
+    - pkgconfig(Qt6Linguist)
+    - pkgconfig(Qt6Core)
+    - pkgconfig(Qt6DBus)
+    - pkgconfig(libexif)
+    - pkgconfig(x11)
+    - pkgconfig(xcb)
+    - qt6-base-private-devel
+    - menu-cache-devel
+    - libfm-extra-devel
+    - lxqt-build-tools-devel
+    - libqtxdg-devel
+    - lxqt-menu-data-devel
+    - cmake
+    - ninja
+setup      : |
+    mkdir build
+    cd build
+    export QT_VER=$(pkg-config --modversion Qt6Gui)
+    cmake .. -G Ninja \
+        -DCMAKE_INSTALL_PREFIX=/usr \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DBUILD_WITH_QT6=ON \
+        -DQT_NO_PRIVATE_MODULE_WARNING=ON \
+        -DUPDATE_TRANSLATIONS=OFF \
+        -DCMAKE_CXX_FLAGS="${CXXFLAGS} \
+            -I/usr/include/qt6/QtGui/${QT_VER}/QtGui \
+            -I/usr/include/qt6/QtGui/${QT_VER} \
+            -I/usr/include/qt6/QtCore/${QT_VER}/QtCore \
+            -I/usr/include/qt6/QtCore/${QT_VER}"
+build      : |
+    cd build
+    ninja
+install    : |
+    cd build
+    DESTDIR=%installroot% ninja install

@@ -1,0 +1,32 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : wcm
+version    : 0.10.0
+release    : 2
+source     :
+    - https://github.com/WayfireWM/wcm/releases/download/v0.10.0/wcm-0.10.0.tar.xz : 38b912dcaaf52f7585414b5b40a694b0706ed5570e17703bc3d07654646ba707
+license    : MIT
+component  : desktop.wayland
+summary    : Wayfire Config Manager
+description: |
+    WCM is a Wayland configuration manager for Wayfire.
+
+builddeps  :
+    - wayfire-devel
+    - wayland-protocols-devel
+    - libgtk-3-devel
+    - libgtkmm-3-devel
+    - meson
+    - ninja
+
+rundeps    :
+    - wayfire
+
+build      : |
+    %meson_configure --prefix=/usr --buildtype=release
+    %ninja_build
+
+install    : |
+    %ninja_install
+
+check      : |
+    true

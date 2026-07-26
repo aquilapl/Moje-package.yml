@@ -1,0 +1,25 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name        : wvkbd
+version     : 0.18
+release     : 5
+source      :
+    - https://github.com/jjsullivan5196/wvkbd/archive/refs/tags/v0.18.tar.gz : 4cd4e32490fba7913a9053645ce2a8d453c596bb3dd780631b8656d746327de6
+license     : GPL-3.0-or-later
+component   : desktop
+summary     : On-screen keyboard for wlroots compositors
+description : |
+    Minimal on-screen keyboard for wlroots-based compositors like labwc.
+builddeps   :
+    - libcairo-devel
+    - pango-devel
+    - wayland-devel
+    - libxkbcommon-devel
+    - scdoc
+    - python3
+build       : |
+    python3 $pkgfiles/add-polish.py
+    %make
+install     : |
+    %make_install PREFIX=/usr
+    install -Dm644 README.md -t $installdir/usr/share/doc/wvkbd
+    install -Dm644 LICENSE $installdir/usr/share/licenses/wvkbd/LICENSE

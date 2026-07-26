@@ -1,0 +1,43 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : lxqt-runner
+version    : 2.2.0
+release    : 1
+source     :
+    - https://github.com/lxqt/lxqt-runner/archive/refs/tags/2.2.0.tar.gz : e8400c32c43667ad0854259d71139c5298f109f866ddc7583433fe964ffa5c50
+license    : LGPL-2.1-or-later
+component  : desktop.library
+summary    : LXQt tool to launch programs quickly
+description: |
+    lxqt-runner is a tool to launch programs quickly by typing their names.
+builddeps  :
+    - qt6-base-devel
+    - qt6-base-private-devel
+    - qt6-tools-devel
+    - qt6-wayland-devel
+    - liblxqt-devel
+    - libqtxdg-devel
+    - libfm-qt-devel
+    - lxqt-globalkeys-devel     # Dodane przez Ciebie
+    - layer-shell-qt-devel       # <--- Rozwiązuje błąd FindLayerShellQt.cmake
+    - kf6-kwindowsystem-devel
+    - kwayland-devel
+    - lxqt-build-tools-devel
+    - muparser-devel
+    - pkgconfig(x11)
+    - cmake
+    - ninja
+setup      : |
+    # Tradycyjne wstrzyknięcie GuiPrivate
+    sed -i '/find_package(Qt6/a if(Qt6_VERSION VERSION_GREATER_EQUAL 6.10)\n  find_package(Qt6 COMPONENTS GuiPrivate REQUIRED)\nendif()' CMakeLists.txt
+
+    mkdir build
+    cd build
+    cmake .. -G Ninja \
+        -DCMAKE_INSTALL_PREFIX=/usr \
+        -DCMAKE_BUILD_TYPE=Release
+build      : |
+    cd build
+    ninja
+install    : |
+    cd build
+    DESTDIR=%installroot% ninja install

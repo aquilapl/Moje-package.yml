@@ -1,0 +1,60 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : aerion
+version    : 0.3.1
+release    : 22
+source     :
+    - https://github.com/hkdb/aerion/archive/refs/tags/v0.3.1.tar.gz : c7a2d08a9ef16308569959a512ce54af86e62c8bdd3783b115c3181225430117
+homepage   : https://aerion.3df.io/
+license    : Apache-2.0
+component  : network.mail
+summary    : Lightweight open-source email client
+description: |
+    Aerion is a modern, lightweight email client inspired by Geary, focused on
+    resource efficiency and a clean user experience. It supports Gmail, Outlook,
+    Microsoft 365, and generic IMAP/SMTP, with conversation threading, rich text
+    composition, contact sync, PGP/S/MIME, and multiple color themes.
+    Polish language support and system tray icon included.
+networking : true
+builddeps  :
+    - pkgconfig(glib-2.0)
+    - pkgconfig(gtk+-3.0)
+    - pkgconfig(webkit2gtk-4.1)
+    - golang
+    - nodejs
+environment: |
+    export CGO_ENABLED=1
+    export CGO_CFLAGS="${CFLAGS}"
+    export CGO_CXXFLAGS="${CXXFLAGS}"
+    export CGO_LDFLAGS="${LDFLAGS}"
+    export GOFLAGS="-buildmode=pie -trimpath -mod=readonly -modcacherw"
+setup      : |
+    go mod download -x
+    
+build      : |
+    pushd frontend
+    
+    # Kopiowanie tłumaczenia polskiego
+    mkdir -p src/lib/i18n/locales
+    cp $pkgfiles/pl.json src/lib/i18n/locales/pl.json
+    
+    # Dodanie polskiego języka do frontendu
+    sed -i '/register('\''zh-TW'\'', () => import('\''\.\/locales\/zh-TW\.json'\''))/a\register('\''pl'\'', () => import('\''./locales/pl.json'\''))' src/lib/i18n/index.ts
+    sed -i '/{ code: '\''zh-TW'\'', name: '\''繁體中文 (台灣)'\'' },/a\  { code: '\''pl'\'', name: '\''Polski'\'' },' src/lib/i18n/index.ts
+    
+    npm install
+    npm run build
+    popd
+
+    # Kompilacja
+    go build -tags desktop,webkit2_41,production -ldflags "-w -s -linkmode=external" -o aerion .
+install    : |
+    install -Dm0755 aerion ${installdir}/usr/bin/aerion
+    
+    # Instalacja ikony w wysokiej rozdzielczości skojarzonej z plikiem .desktop
+    install -Dm0644 build/appicon.png ${installdir}/usr/share/icons/hicolor/256x256/apps/io.github.hkdb.Aerion.png
+    
+    # Instalacja skrótu aplikacji aktywującego poprawne śledzenie okna przez Crystal Dock
+    install -Dm0644 build/linux/aerion.desktop ${installdir}/usr/share/applications/io.github.hkdb.Aerion.desktop
+    
+    install -Dm0644 build/flatpak/io.github.hkdb.Aerion.metainfo.xml -t ${installdir}/usr/share/metainfo
+    %install_license LICENSE

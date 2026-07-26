@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : yyjson
+version    : 0.10.0
+release    : 1
+source     :
+    - https://github.com/ibireme/yyjson/archive/refs/tags/0.10.0.tar.gz : 0d901cb2c45c5586e3f3a4245e58c2252d6b24bf4b402723f6179523d389b165
+license    : MIT
+component  : programming.library
+summary    : Fast JSON library
+description: |
+    A high performance JSON library written in ANSI C
+
+builddeps:
+  - cmake
+
+setup      : |
+    %cmake_ninja
+
+build      : |
+    %ninja_build
+
+install    : |
+    %ninja_install

@@ -1,0 +1,61 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : python-pyqt6
+version    : 6.8.0
+release    : 1
+source     :
+    - https://pypi.debian.net/PyQt6/PyQt6-6.8.0.tar.gz : 6d8628de4c2a050f0b74462e4c9cb97f839bf6ffabbca91711722ffb281570d9
+homepage   : https://www.riverbankcomputing.com/software/pyqt/
+summary    : Python bindings for Qt6
+description: |
+    PyQt6 is a comprehensive set of Python bindings for Qt v6. It is implemented
+    as more than 35 extension modules and enables Python to be used as an
+    alternative application development language to C++ on all supported platforms.
+license    : GPL-3.0-only
+component  : programming.python
+
+builddeps  :
+    - pkgconfig(python3)
+    - pkgconfig(Qt6Core)
+    - pkgconfig(Qt6Gui)
+    - pkgconfig(Qt6Widgets)
+    - pkgconfig(Qt6Network)
+    - pkgconfig(Qt6OpenGL)
+    - pkgconfig(Qt6Sql)
+    - pkgconfig(Qt6Xml)
+    - pkgconfig(Qt6DBus)
+    - pkgconfig(Qt6Svg)
+    - pkgconfig(Qt6PrintSupport)
+    - python-pyqt6-sip
+    - pyqt-builder
+    - python-sip
+    - qt6-base-devel
+    - qt6-tools-devel
+
+rundeps    :
+    - python-pyqt6-sip
+    - qt6-base
+
+setup      : |
+    # Brak kroków setup — pyqt-builder nie używa configure
+
+build      : |
+    export PATH="/usr/lib/qt6/bin:$PATH"
+    sip-build \
+        --confirm-license \
+        --no-designer-plugin \
+        --no-qml-plugin \
+        --no-dbus-python \
+        --qt-shared \
+        --jobs %YJOBS%
+
+install    : |
+    # sip-build instaluje do --target-dir
+    export PATH="/usr/lib/qt6/bin:$PATH"
+    sip-install \
+        --confirm-license \
+        --no-designer-plugin \
+        --no-qml-plugin \
+        --no-dbus-python \
+        --target-dir %installroot%/usr/lib/python3/site-packages \
+        --qt-shared \
+        --jobs %YJOBS%

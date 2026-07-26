@@ -1,0 +1,45 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : budgie-desktop-view
+version    : 10.10.2
+release    : 401
+source     :
+    - https://github.com/BuddiesOfBudgie/budgie-desktop-view/releases/download/v10.10.2/budgie-desktop-view-v10.10.2.tar.xz : 41f5e506877eb591daef895bd946b2091fef28ccd3f32d82e3f923eebe102e3c
+
+license    : GPL-3.0-or-later
+component  : desktop.budgie
+summary    : Budgie Desktop View module (Wayland preview)
+description: |
+    budgie-desktop-view provides desktop view, desklets, wallpaper and
+    other desktop-related functionality for Budgie 10.10 preview on Wayland.
+
+builddeps  :
+    - vala
+    - meson
+    - ninja
+    - libgtk-3-devel
+    - libadwaita-devel
+    - gdk-pixbuf-devel
+    - pango-devel
+    - libcairo-devel
+    - glib2-devel
+    - libgtk-layer-shell-devel
+    - libjson-glib-devel
+    - libgnome-desktop-devel
+    - wayland-protocols-devel
+    - libxfce4windowing-devel
+
+rundeps    :
+    - libgtk-3
+    - libadwaita
+    - glib2
+    - gdk-pixbuf
+
+build: |
+    # Wyłączenie manpages, które mogły powodować błąd I/O
+    meson setup _build --prefix=/usr 
+    ninja -C _build
+
+install: |
+    # Ręczne przekierowanie instalacji Mesona do katalogu pakietu
+    DESTDIR=$installdir meson install -C _build
+

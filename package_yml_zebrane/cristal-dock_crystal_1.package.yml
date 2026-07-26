@@ -1,0 +1,39 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : crystal-dock
+version    : 1.0
+release    : 1
+source     :
+    - https://github.com/dangvd/crystal-dock/archive/refs/tags/v1.0.tar.gz : d7ce3d3af91f2a3a6bd2c1247cf1bacd4fc08c14214607f3e7480e5626ea9ae2
+homepage   : https://github.com/dangvd/crystal-dock
+license    : GPL-3.0-or-later
+component  : desktop
+summary    : Dock for X11 based on Qt5 and KWindowSystem
+description: |
+    Crystal Dock 1.x is a lightweight dock for X11 desktops
+    based on Qt5 and KWindowSystem.
+
+builddeps  :
+    - pkgconfig(Qt5Core)
+    - pkgconfig(Qt5Gui)
+    - pkgconfig(Qt5Widgets)
+    - kwindowsystem-devel
+    - extra-cmake-modules
+    - cmake
+    - ninja
+
+rundeps    :
+    - kwindowsystem
+
+setup      : |
+    %patch -p1 -i $pkgfiles/lxde-support.patch
+    cmake -G Ninja \
+        -DCMAKE_INSTALL_PREFIX=/usr \
+        -DCMAKE_BUILD_TYPE=Release \
+        -B solusBuildDir \
+        -S src
+
+build      : |
+    %ninja_build
+
+install    : |
+    %ninja_install

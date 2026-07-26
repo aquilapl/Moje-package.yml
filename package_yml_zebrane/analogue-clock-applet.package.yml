@@ -1,0 +1,31 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : budgie-analogue-clock-applet
+version    : 2.1
+release    : 1
+source     :
+    - https://github.com/samlane-ma/analogue-clock-applet/archive/refs/tags/v2.1.tar.gz :  c02a8192cf4ef97841620a3e4bb7b3763f6cfdbbf9b4ab742edaad73fcb70099
+homepage   : https://github.com/samlane-ma/analogue-clock-applet
+license    : GPL-3.0-or-later
+component  : desktop.budgie
+summary    : Analog clock applet for the Budgie panel
+description: |
+    A simple analogue clock applet for the Budgie panel.
+    Supports customization of clock size, frame, face, hands and hour markings.
+
+builddeps  :
+    - pkgconfig(budgie-1.0)
+    - pkgconfig(gtk+-3.0)
+    - pkgconfig(glib-2.0)
+    - meson
+    - ninja
+    - vala
+
+setup      : |
+    %meson_configure
+
+build      : |
+    %ninja_build
+
+install    : |
+    %ninja_install
+

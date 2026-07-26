@@ -1,0 +1,51 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : lxqt-config
+version    : 2.2.0
+release    : 1
+source     :
+    - https://github.com/lxqt/lxqt-config/archive/refs/tags/2.2.0.tar.gz : 28f9755fdb0254e286771b0bebc78bd6b74502f3a57fb07a5a11173ba8617e1c
+license    : LGPL-2.1-or-later
+component  : desktop.library
+summary    : LXQt Configuration Center
+description: |
+    lxqt-config is the central place to configure your LXQt desktop environment.
+builddeps  :
+    - qt6-base-devel
+    - qt6-base-private-devel
+    - qt6-tools-devel
+    - pkgconfig(x11)
+    - pkgconfig(xcb)
+    - pkgconfig(libudev)
+    - pkgconfig(zlib)
+    - pkgconfig(xcursor)
+    - pkgconfig(xi)
+    - xorg-driver-input-libinput-devel
+    - liblxqt-devel
+    - kf6-kwindowsystem-devel
+    - libkscreen-devel
+    - lxqt-build-tools-devel
+    - libqtxdg-devel
+    - lxqt-menu-data-devel
+    - cmake
+    - ninja
+setup      : |
+    # Naprawa błędu isPrimary w monitorsettingsdialog.cpp
+    sed -i 's/monitor.primary = output->isPrimary();/monitor.primary = false;/' lxqt-config-monitor/monitorsettingsdialog.cpp
+    
+    # Naprawa błędu isPrimary w monitorwidget.cpp
+    sed -i 's/if (output->isPrimary())/if (false)/' lxqt-config-monitor/monitorwidget.cpp
+
+    # Twoja poprzednia poprawka dla Qt6 i GuiPrivate
+    sed -i '/find_package(Qt6/a if(Qt6_VERSION VERSION_GREATER_EQUAL 6.10)\n  find_package(Qt6 COMPONENTS GuiPrivate REQUIRED)\nendif()' CMakeLists.txt
+
+    mkdir build
+    cd build
+    cmake .. -G Ninja \
+        -DCMAKE_INSTALL_PREFIX=/usr \
+        -DCMAKE_BUILD_TYPE=Release
+build      : |
+    cd build
+    ninja
+install    : |
+    cd build
+    DESTDIR=%installroot% ninja install

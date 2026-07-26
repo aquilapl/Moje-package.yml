@@ -1,0 +1,60 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : budgie-control-center
+version    : 2.1.1
+release    : 401
+source     :
+    - https://github.com/BuddiesOfBudgie/budgie-control-center/releases/download/v2.1.1/budgie-control-center-2.1.1.tar.xz : 4c58a9946e4997f7ead005f022cac0c4f0fc7918a8a7ed6d3b988fc0775777c4
+license    :
+    - GPL-2.0-or-later
+    - LGPL-3.0-or-later
+component  : desktop.budgie
+summary    : Budgie Control Center (Wayland-native)
+description: |
+    Budgie Control Center is the settings application for Budgie Desktop.
+builddeps  :
+    - pkgconfig(accountsservice)
+    - pkgconfig(colord)
+    - pkgconfig(fontconfig)
+    - pkgconfig(gcr-3)
+    - pkgconfig(glib-2.0)
+    - pkgconfig(cups)
+    - pkgconfig(gnome-desktop-3.0)
+    - pkgconfig(gnome-settings-daemon)
+    - pkgconfig(goa-1.0)
+    - pkgconfig(gsettings-desktop-schemas)
+    - pkgconfig(gsound)
+    - pkgconfig(gtk+-3.0)
+    - pkgconfig(gudev-1.0)
+    - pkgconfig(ibus-1.0)
+    - pkgconfig(libcanberra-gtk3)
+    - pkgconfig(libhandy-1)
+    - network-manager-libnm-devel
+    - modem-manager-devel
+    - pkgconfig(libnma)
+    - pkgconfig(libpulse)
+    - pkgconfig(libsecret-1)
+    - pkgconfig(libxml-2.0)
+    - pkgconfig(polkit-gobject-1)
+    - pkgconfig(pwquality)
+    - pkgconfig(udisks2)
+    - pkgconfig(upower-glib)
+    - pkgconfig(wayland-client)
+    - pkgconfig(wayland-protocols)
+    - pkgconfig(cheese)
+    - pkgconfig(libwacom)
+    - libgtop-devel
+    - gnome-bluetooth-1-devel
+    - libcolord-gtk-devel
+    - samba-devel
+    - wlroots-devel
+    - libdisplay-info-devel 
+    - intltool                
+    - gettext-devel 
+    - meson
+    - ninja
+setup      : |
+    %meson_configure
+build      : |
+    %ninja_build
+install    : |
+    %ninja_install

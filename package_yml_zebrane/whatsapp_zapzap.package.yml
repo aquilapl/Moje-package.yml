@@ -1,0 +1,51 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name    : zapzap
+version : 6.5.2.2
+release : 3
+source  :
+    - https://github.com/rafatosta/zapzap/archive/refs/tags/6.5.2.2.tar.gz : a6cbe2a6418190457e3b99a727b4c42bdb697d115ab34e03c5acf3309039b00a
+homepage: https://github.com/rafatosta/zapzap
+license : GPL-3.0-or-later
+component: network.im
+summary : Desktop client for WhatsApp Web
+description: |
+    Desktop client for WhatsApp Web built with Python and PyQt6-WebEngine.
+
+builddeps:
+    - python-build
+    - python-installer
+    - python-wheel
+    - python-pyqt6-webengine
+
+rundeps:
+    - python-pyqt6-webengine
+    - python-pydantic
+    - python-typing-extensions
+    - python-inflect
+    - python-jaraco.text
+
+patches:
+    - fix-trayicon-size.patch
+
+files:
+    - files/zapzap.mo
+
+build: |
+    %patch -p1 -i $pkgfiles/fix-trayicon-size.patch
+    python -m build --wheel --no-isolation
+
+install: |
+    python -m installer --destdir=$installdir dist/*.whl
+
+    install -Dm644 $pkgfiles/zapzap.mo \
+        $installdir/usr/lib64/python3.14/site-packages/zapzap/po/pl/LC_MESSAGES/zapzap.mo
+
+    install -Dm644 share/applications/com.rtosta.zapzap.desktop \
+        $installdir/usr/share/applications/com.rtosta.zapzap.desktop
+
+    install -Dm644 share/icons/com.rtosta.zapzap.svg \
+        $installdir/usr/share/icons/hicolor/scalable/apps/com.rtosta.zapzap.svg
+
+    install -Dm644 share/metainfo/com.rtosta.zapzap.appdata.xml \
+        $installdir/usr/share/metainfo/com.rtosta.zapzap.appdata.xml
+    %install_license LICENSE

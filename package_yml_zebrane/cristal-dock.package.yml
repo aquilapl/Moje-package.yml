@@ -1,0 +1,44 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : crystal-dock
+version    : 2.16
+release    : 7
+source     :
+    - https://github.com/aquilapl/crystal-dock-analog/archive/refs/heads/main.tar.gz : 3837d9a88540f715e3c299b3fe9218c4188220ae51f3d7611eca302399aad833
+homepage   : https://github.com/dangvd/crystal-dock
+license    : GPL-3.0-or-later
+component  : desktop
+summary    : Modern Wayland dock based on Qt6 and LayerShellQt
+description: |
+    Crystal Dock is a modern dock for Wayland compositors
+    using Qt6 and layer-shell protocol.
+
+builddeps  :
+    - pkgconfig(Qt6Core)
+    - pkgconfig(Qt6Gui)
+    - pkgconfig(Qt6Widgets)
+    - pkgconfig(Qt6WaylandClient)
+    - pkgconfig(Qt6DBus)
+    - pkgconfig(wayland-client)
+    - qt6-base-private-devel
+    - qt6-linguist
+    - qt6-tools-devel
+    - layer-shell-qt-devel
+    - cmake
+    - ninja
+
+rundeps    :
+    - qt6-base
+    - qt6-wayland
+    - layer-shell-qt
+
+setup      : |
+    %patch -p1 -i $pkgfiles/crystal-dock-translations.patch
+    %patch -p1 -i $pkgfiles/main-translations.patch
+    grep -c "QTranslator" src/main.cc > /tmp/qtranslator_check.txt || true
+    %cmake_ninja -S src
+
+build      : |
+    %ninja_build
+
+install    : |
+    %ninja_install

@@ -1,0 +1,82 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : onlyoffice-desktopeditors
+version    : 9.4.0
+release    : 8
+source     :
+    -  https://download.onlyoffice.com/install/desktop/editors/linux/onlyoffice-desktopeditors_amd64.deb : 4271434e81be42b1559fd989d24bf6d413482f278dc6a5e328202a4fc1a18649
+homepage   : https://www.onlyoffice.com
+license    : GPL-3.0
+strip      : no
+component  : office
+summary    : ONLYOFFICE DesktopEditors
+description: |
+    ONLYOFFICE DesktopEditors is an application for editing office documents (text documents, spreadsheets and presentations) from onlyoffice cloud portal on local computer without browser using.
+
+builddeps  :
+    - libglvnd
+    - libx11
+    - gsound
+    - curl
+    - wget
+    - libcairo
+    - libgtk-3
+    - xdg-utils
+    - gconf
+    - libstdc++
+    - at-spi2
+    - libdrm
+    - mesalib
+    - gstreamer-plugins-base
+    - qt6-base
+    - qt6-webengine
+    - qt6-multimedia
+    - graphicsmagick
+
+rundeps    :
+    - libglvnd
+    - libx11
+    - gsound
+    - curl
+    - wget
+    - at-spi2
+    - libcairo
+    - libgtk-3
+    - xdg-utils
+    - gconf
+    - libstdc++
+    - mscorefonts
+    - libdrm
+    - mesalib
+    - gstreamer-plugins-base
+    - qt6-base
+    - qt6-webengine
+    - qt6-multimedia
+
+# Pakiet .deb deklaruje zależność od "gstreamer-1.0" której Solus nie ma.
+# ypkg automatycznie wykrywa zależności z pliku control – ignorujemy je
+# i deklarujemy własne powyżej przez rundeps.
+autodep    : no
+
+setup      : |
+    ar xf $sources/onlyoffice*
+    tar xf data.tar*
+
+install    : |
+    mkdir -p $installdir
+    cp -R opt $installdir/opt/
+    cp -R usr $installdir/usr/
+    rm -rf $installdir/opt/onlyoffice/desktopeditors/editors/sdkjs/slide/themes/*/media
+    # Jeśli są dwa pliki .desktop, usuń jeden:
+    rm -f $installdir/usr/share/applications/desktopeditors.desktop 2>/dev/null || true
+
+    # Napraw dowiązania symboliczne do bibliotek gstreamer
+    # Solus używa nazwy "gstreamer" zamiast "gstreamer-1.0"
+    OO_LIB=$installdir/opt/onlyoffice/desktopeditors
+    for lib in $OO_LIB/lib/libgst*.so* $OO_LIB/libgst*.so*; do
+        [ -e "$lib" ] || continue
+        target=$(readlink "$lib" 2>/dev/null || true)
+        if echo "$target" | grep -q "gstreamer-1.0"; then
+            newlink=$(echo "$target" | sed 's|gstreamer-1.0|gstreamer|g')
+            ln -sf "$newlink" "$lib"
+        fi
+    done

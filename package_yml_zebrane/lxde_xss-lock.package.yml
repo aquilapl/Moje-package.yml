@@ -1,0 +1,21 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : xss-lock
+version    : 0.4.0
+release    : 1
+source     :
+    - https://github.com/wavexx/xss-lock/archive/refs/tags/v0.4.0.tar.gz : 7d990fcd574aabdaf3c8fb20dbb38317aa31a00dce399e9902361bf38f7d9a82
+license    : MIT
+component  : desktop.util
+summary    : Use external screen locker as X screen saver
+description: |
+    xss-lock hooks up your favorite screen locker to the MIT screen saver extension.
+builddeps  :
+    - pkgconfig(xcb)
+    - pkgconfig(xcb-util)
+    - cmake
+setup      : |
+    %cmake
+build      : |
+    %make
+install    : |
+    %make_install

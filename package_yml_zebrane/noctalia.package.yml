@@ -1,0 +1,50 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name: noctalia
+version: "5.0.0"
+release: 1
+source:
+  - https://github.com/noctalia-dev/noctalia/archive/refs/tags/v5.0.0-beta.3.tar.gz : 0cd9d718acb95eec8500e6159c2981de46070f13f0fdacf7cb1e51cb2cbddb5e
+homepage: https://noctalia.dev/
+license: GPL-3.0-or-later
+summary: Sleek and minimal Wayland desktop shell
+description: |
+  Noctalia is a native Wayland desktop shell built with Quickshell/Qt6.
+
+builddeps:
+  - meson
+  - ninja
+  - qt6-base-devel
+  - qt6-declarative-devel
+  - qt6-wayland-devel
+  - wayland-devel
+  - wayland-protocols-devel
+  - pkgconf
+  - libinput-devel
+  - stb
+  - tomlplusplus-devel
+  - md4c-devel
+  - json-c-devel
+  - sdbus-cpp-devel
+  - libgtk-3-devel
+  - librsvg-devel 
+  - pipewire-devel
+  - wireplumber-devel
+  - curl-devel
+  - libqalculate-devel
+  - nlohmann-json
+  - libwebp-devel 
+
+rundeps:
+  - qt6-base
+  - qt6-wayland
+  - wayland
+  - sdbus-cpp
+
+setup: |
+  meson setup build-release --buildtype=release --prefix=/usr
+
+build: |
+  ninja -C build-release
+
+install: |
+  DESTDIR=$installdir meson install -C build-release

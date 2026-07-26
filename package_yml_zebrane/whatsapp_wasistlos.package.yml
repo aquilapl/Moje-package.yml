@@ -1,0 +1,112 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : wasistlos
+version    : 1.7.0
+release    : 4
+source     :
+    - https://github.com/xeco23/WasIstLos/archive/refs/tags/v1.7.0.tar.gz : 729955f6fc3389376e3e81bb9cd561bf5e0bbf47ff3e69d94c35d1fd4745f9fa
+homepage   : https://github.com/xeco23/WasIstLos
+license    : GPL-3.0-or-later
+component  : network.im
+summary    : An unofficial WhatsApp desktop application for Linux
+description: |
+    WasIstLos is an unofficial WhatsApp desktop application written in C++ with the help of gtkmm and WebKitGtk libraries. It provides a native Linux experience with features like system tray integration, notification sounds, spell checking, keyboard shortcuts, and more.
+builddeps  :
+    - pkgconfig(gtkmm-3.0)
+    - pkgconfig(webkit2gtk-4.1)
+    - pkgconfig(ayatana-appindicator3-0.1)
+    - pkgconfig(libcanberra)
+    - pkgconfig(hunspell)
+    - intltool
+setup      : |
+    # Ta sekcja wprowadza wszystkie niezbędne modyfikacje za pomocą stabilnych poleceń Bash.
+
+    # 1. FIX C++ ACCESS: Uczyń m_signalUnreadCount PUBLICZNYM w WebView.hpp
+    sed -i '/m_signalNotificationClicked;/a        public:\n            sigc::signal<void, int> m_signalUnreadCount;' src/ui/WebView.hpp
+    
+    # 2. Dodaj deklarację sygnału do WebView.hpp
+    sed -i '/signalNotificationClicked() noexcept;/a            sigc::signal<void, int>& signalUnreadCount() noexcept;' src/ui/WebView.hpp
+    
+    # 3. Dodaj funkcję pomocniczą AppIndicator do TrayIcon.hpp
+    sed -i '/void setAttention(bool attention);/a            AppIndicator* getIndicator() const noexcept { return m_appIndicator; }' src/ui/TrayIcon.hpp
+    
+    # 4. Dodaj sygnał do MainWindow.hpp
+    sed -i '/onNotificationChanged(bool show);/a            void onUnreadCountChanged(int count);' src/ui/MainWindow.hpp
+    
+    # -- IMPLEMENTACJA KODU --
+    
+    # 5. Dodaj nagłówki GLib i C++ <string> do WebView.cpp
+    sed -i '/#include <optional>/a#include <glib.h>' src/ui/WebView.cpp
+    sed -i '/#include <streambuf>/a#include <string>' src/ui/WebView.cpp
+    
+    # 6. FIX C++ CALLBACK: Utwórz i wstaw funkcję callbacka (webview_title_changed_callback) z użyciem GRegex
+    
+    # Krok 6a: Utwórz tymczasowy plik z funkcją C++
+    cat > webview_callback.cpp << "EOF_CALLBACK"
+    
+    static void webview_title_changed_callback(GObject*, GParamSpec*, gpointer user_data)
+    {
+        auto* self = static_cast<wil::ui::WebView*>(user_data);
+        const char* t = webkit_web_view_get_title(WEBKIT_WEB_VIEW(self));
+        int cnt = 0;
+        
+        if (t) {
+            // Użycie GRegex, aby uniknąć problemów z GCC/C++ <regex>
+            GRegex *regex = g_regex_new("\\((\\d+)\\)", 0, 0, NULL);
+            GMatchInfo *match_info;
+            
+            if (g_regex_match(regex, t, 0, &match_info)) {
+                gchar *match = g_match_info_fetch(match_info, 1);
+                if (match) {
+                    try { cnt = std::stoi(match); }
+                    catch (...) {}
+                    g_free(match);
+                }
+            }
+            
+            if (match_info)
+                g_match_info_free(match_info);
+                
+            if (regex)
+                g_regex_unref(regex);
+        }
+        
+        self->m_signalUnreadCount.emit(cnt);
+    }
+    EOF_CALLBACK
+
+    # Krok 6b: Wstaw zawartość tymczasowego pliku do WebView.cpp
+    sed -i '/#include <string>/r webview_callback.cpp' src/ui/WebView.cpp
+
+    # 7. Podłącz statyczną funkcję do sygnału notify::title w konstruktorze WebView::WebView()
+    sed -i '/Glib::signal_timeout().connect/i\
+    g_signal_connect(*this, "notify::title", G_CALLBACK(webview_title_changed_callback), this);\
+    ' src/ui/WebView.cpp
+
+    # 8. Podłącz sygnał w MainWindow.cpp
+    sed -i '/signalNotificationClicked().connect/a        m_webView.signalUnreadCount().connect(sigc::mem_fun(*this, &MainWindow::onUnreadCountChanged));' src/ui/MainWindow.cpp
+
+    # 9. Dodaj implementację onUnreadCountChanged do MainWindow.cpp
+    sed -i $'/void MainWindow::onShow()/i\
+    void MainWindow::onUnreadCountChanged(int count)\
+    {\
+        m_trayIcon.setAttention(count > 0);\
+        if (count > 0)\
+            app_indicator_set_label(m_trayIcon.getIndicator(), std::to_string(count).c_str(), "");\
+        else\
+            app_indicator_set_label(m_trayIcon.getIndicator(), nullptr, nullptr);\
+    }\
+    ' src/ui/MainWindow.cpp
+
+    # 10. Dodaj implementację sygnału do WebView.cpp
+    sed -i $'/void WebView::onLoadStatusChanged/i\
+    sigc::signal<void, int>& WebView::signalUnreadCount() noexcept\
+    {\
+        return m_signalUnreadCount;\
+    }\
+    ' src/ui/WebView.cpp
+
+build      : |
+    %cmake_ninja -DCMAKE_BUILD_TYPE=Release
+    %ninja_build
+install    : |
+    %ninja_install

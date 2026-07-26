@@ -1,0 +1,31 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : lxqt-wayland-session
+version    : 0.1.1
+release    : 1
+source     :
+    - https://github.com/lxqt/lxqt-wayland-session/releases/download/0.1.1/lxqt-wayland-session-0.1.1.tar.xz : 34e9441a7d4bdf243e4a380a10d00e746e4ef43a1a6ccda1c8e6c6bc3c513fbc
+license    : LGPL-2.1-or-later
+component  : desktop.library
+summary    : Files for LXQt Wayland session
+description: |
+    lxqt-wayland-session provides the desktop files and scripts needed to start an LXQt session on Wayland using a compositor like Labwc.
+builddeps  :
+    - liblxqt-devel
+    - libqtxdg-devel
+    - kf6-kwindowsystem-devel
+    - qt6-tools-devel
+    - xdg-user-dirs            # <--- Rozwiązuje błąd XdgUserDirsUpdate_EXECUTABLE
+    - lxqt-build-tools-devel
+    - cmake
+    - ninja
+setup      : |
+    mkdir build
+    cd build
+    cmake .. -G Ninja \
+        -DCMAKE_INSTALL_PREFIX=/usr
+build      : |
+    cd build
+    ninja
+install    : |
+    cd build
+    DESTDIR=%installroot% ninja install

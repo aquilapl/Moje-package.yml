@@ -1,0 +1,37 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : lxqt-notificationd
+version    : 2.2.0
+release    : 1
+source     :
+    - https://github.com/lxqt/lxqt-notificationd/archive/refs/tags/2.2.0.tar.gz : e0439520ba46763178337b90fb7719f7d9b8846c6b3345fb45ec782bbc774c9e 
+license    : LGPL-2.1-or-later
+component  : desktop.library
+summary    : LXQt notification daemon
+description: |
+    lxqt-notificationd is the LXQt desktop notification daemon.
+builddeps  :
+    - qt6-base-devel
+    - qt6-base-private-devel
+    - qt6-tools-devel
+    - liblxqt-devel
+    - libqtxdg-devel
+    - layer-shell-qt-devel        # Niezbędne dla powiadomień na Waylandzie
+    - kf6-kwindowsystem-devel
+    - lxqt-build-tools-devel
+    - cmake
+    - ninja
+setup      : |
+    # Tradycyjne wstrzyknięcie GuiPrivate dla poprawnego linkowania w Solusie
+    sed -i '/find_package(Qt6/a if(Qt6_VERSION VERSION_GREATER_EQUAL 6.10)\n  find_package(Qt6 COMPONENTS GuiPrivate REQUIRED)\nendif()' CMakeLists.txt
+
+    mkdir build
+    cd build
+    cmake .. -G Ninja \
+        -DCMAKE_INSTALL_PREFIX=/usr \
+        -DCMAKE_BUILD_TYPE=Release
+build      : |
+    cd build
+    ninja
+install    : |
+    cd build
+    DESTDIR=%installroot% ninja install

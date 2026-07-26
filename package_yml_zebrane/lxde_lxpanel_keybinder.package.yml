@@ -1,0 +1,52 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : keybinder-legacy
+version    : 0.3.1
+release    : 1
+source     :
+    - https://github.com/kupferlauncher/keybinder/archive/v0.3.1.tar.gz : 6073bb5f626f75c4a6f25291b32673af02d47e735b56f9d471150d678ac0b5fa
+license    : MIT
+component  : desktop.lxde
+summary    : Global keyboard shortcuts library (GTK2 legacy)
+description: |
+    Legacy keybinder library for GTK2 applications.
+builddeps  :
+    - pkgconfig(gtk+-2.0)
+    - libgtk-2-devel
+    - gobject-introspection-devel
+    - autoconf
+    - automake
+    - libtool
+    - gnome-common
+    - gtk-doc
+    - gettext-devel
+setup      : |
+    # 1. Tworzymy puste pliki wymagane przez standard GNU
+    touch ChangeLog
+    touch README
+    
+    # 2. CAŁKOWITE usunięcie Pythona z plików projektu
+    # Wycinamy podkatalog python z Makefile.am
+    sed -i 's/python-keybinder//g' Makefile.am
+    # Wycinamy generowanie Makefile dla pythona z configure.ac
+    sed -i '/python-keybinder\/Makefile/d' configure.ac
+    # Wycinamy sprawdzanie pythona z configure.ac (linie 110-140 zazwyczaj)
+    sed -i '/AM_CHECK_PYTHON_HEADERS/d' configure.ac
+    sed -i '/AM_CHECK_PYMOD/d' configure.ac
+    
+    # 3. Wymuszamy tryb 'foreign' (ignorowanie brakujących plików ChangeLog/NEWS)
+    # Dodajemy 'foreign' do AM_INIT_AUTOMAKE w configure.ac
+    sed -i 's/AM_INIT_AUTOMAKE(\[\(.*\)])/AM_INIT_AUTOMAKE([\1 foreign])/' configure.ac
+
+    # 4. Odświeżamy skrypty bez sprawdzania Pythona
+    autoreconf -vfi --force
+    
+    ./configure --prefix=/usr \
+                --libdir=/usr/lib64 \
+                --sysconfdir=/etc \
+                --disable-static \
+                --disable-python \
+                --disable-lua
+build      : |
+    %make
+install    : |
+    %make_install

@@ -1,0 +1,24 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : cjs
+version    : 140.0
+release    : 2
+source     :
+    - https://github.com/linuxmint/cjs/archive/refs/tags/master.mint22.tar.gz : 00e9c7568ea482e52553d5f0914006791cd5207aee86740f7726809c11c14a09
+license    : LGPL-2.0-or-later
+summary    : The Cinnamon JavaScript interpreter
+description: |
+    CJS is the Cinnamon JavaScript interpreter, based on Mozilla's SpiderMonkey
+    JavaScript engine and GObject introspection.
+builddeps  :
+    - pkgconfig(mozjs-140)
+    - pkgconfig(gobject-introspection-1.0)
+    - pkgconfig(glib-2.0)
+    - pkgconfig(cairo)
+    - readline-devel
+    - pkgconfig(gtk+-3.0)
+setup      : |
+    %meson_configure -Dskip_gtk_tests=true
+build      : |
+    %ninja_build
+install    : |
+    %ninja_install

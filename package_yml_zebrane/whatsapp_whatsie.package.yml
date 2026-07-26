@@ -1,0 +1,57 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : whatsie
+version    : 5.1.0
+release    : 4
+source     :
+    - git|https://github.com/keshavbhatt/whatsie.git : v5.1.0
+license    : MIT
+component  : network.im
+summary    : Unofficial WhatsApp Desktop client (Built from source)
+description: |
+    Whatsie is a feature-rich WhatsApp Desktop client written in Qt.
+    This version is compiled natively for Solus to ensure better stability.
+
+builddeps  :
+    - qt6-base-devel
+    - qt6-webengine-devel
+    - qt6-positioning-devel
+    - qt6-tools-devel
+    - libx11-devel
+    - libnotify-devel
+    - cmake
+    - ninja
+    - binutils
+    - clang-devel
+    - knotifyconfig-devel
+    - cups-devel
+    - extra-cmake-modules
+    - git
+
+setup      : |
+    git submodule init
+    git submodule update --init --recursive
+
+    # === POLSKIE TŁUMACZENIE ===
+    mkdir -p src/i18n
+    cp $pkgfiles/pl_PL.ts     src/i18n/
+    cp $pkgfiles/i18n.qrc     src/
+
+    # Kompilacja tłumaczenia Qt6
+    /usr/lib64/qt6/bin/lrelease src/i18n/pl_PL.ts -qm src/i18n/pl_PL.qm || true
+
+    # Dodanie i18n.qrc do CMakeLists.txt
+    %patch -p1 -i $pkgfiles/0001-add-i18n-qrc.patch
+
+    # Dodanie obsługi polskiego tłumacza w main.cpp
+    %patch -p1 -i $pkgfiles/0002-load-polish-translation.patch
+
+    %cmake_ninja \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DCMAKE_INSTALL_PREFIX=/usr \
+        -DENABLE_SPELLCHECK=ON
+
+build      : |
+    %ninja_build
+
+install    : |
+    %ninja_install

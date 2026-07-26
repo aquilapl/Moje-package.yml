@@ -1,0 +1,75 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name        : ferdium
+version     : 7.1.1
+release     : 4
+source      :
+  - https://github.com/ferdium/ferdium-app/releases/download/v7.1.1/Ferdium-linux-7.1.1-amd64.deb : d635e8f0c324d841242e8d27e080a6189b5e28fae82d82a4305fff83addfac7b
+
+license     : MIT
+summary     : Messaging browser for all your services
+description : |
+  Ferdium is a unified messaging application built on Electron.
+
+builddeps   :
+  - alsa-lib
+  - libx11
+  - libxcomposite
+  - libxdamage
+  - libxext
+  - libxfixes
+  - libxrandr
+  - atkmm
+  - at-spi2
+  - libcairo
+  - cups
+  - mesalib
+  - libgtk-3
+  - pango
+  - libxcb
+  - libnotify
+  - glib2
+rundeps     :
+  - alsa-lib
+  - libx11
+  - libxcomposite
+  - libxdamage
+  - libxext
+  - libxfixes
+  - libxrandr
+  - atkmm
+  - at-spi2
+  - libcairo
+  - cups
+  - mesalib
+  - libgtk-3
+  - pango
+  - libxcb
+  - libnotify
+  - glib2
+
+setup       : |
+  # Rozpakowanie DEB
+  ar xf $sources/Ferdium-linux-${version}*
+  tar -xf data.tar.xz
+install     : |
+  # Utworzenie katalogu aplikacji
+  install -d $installdir/usr/share/ferdium
+  cp -a opt/Ferdium/* $installdir/usr/share/ferdium/
+
+  # Wrapper w /usr/bin ustawiający LD_LIBRARY_PATH
+  install -d $installdir/usr/bin
+  echo '#!/bin/bash' > $installdir/usr/bin/ferdium
+  echo 'export LD_LIBRARY_PATH=/usr/share/ferdium:$LD_LIBRARY_PATH' >> $installdir/usr/bin/ferdium
+  echo 'exec /usr/share/ferdium/ferdium "$@"' >> $installdir/usr/bin/ferdium
+  chmod +x $installdir/usr/bin/ferdium
+
+  # Desktop file z poprawionym Exec
+  install -d $installdir/usr/share/applications
+  sed 's|Exec=/opt/Ferdium/ferdium|Exec=ferdium|' usr/share/applications/ferdium.desktop \
+      > $installdir/usr/share/applications/ferdium.desktop
+  chmod 644 $installdir/usr/share/applications/ferdium.desktop
+
+  # Ikony
+  install -d $installdir/usr/share/icons/hicolor
+  cp -a usr/share/icons/hicolor/* $installdir/usr/share/icons/hicolor/
+

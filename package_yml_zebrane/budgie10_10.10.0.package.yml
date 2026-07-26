@@ -1,0 +1,110 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : budgie-desktop
+version    : 10.10.0
+release    : 400
+source     :
+    - https://github.com/BuddiesOfBudgie/budgie-desktop/releases/download/v10.10.0/budgie-desktop-v10.10.0.tar.xz : 255c3a9eda9a367edd7c6652673713cabf85ecadd99e371e403af5cb63db4cb0
+license    : GPL-2.0-or-later
+component  : desktop.budgie
+summary    : Budgie Desktop Environment 10.10 Preview
+description: |
+    Budgie Desktop Environment 10.10 Preview.
+    Modern desktop environment from the Buddies of Budgie project.
+builddeps  :
+    - pkgconfig(accountsservice)
+    - pkgconfig(alsa)
+    - pkgconfig(gdk-pixbuf-2.0)
+    - pkgconfig(gdk-x11-3.0)
+    - pkgconfig(gee-0.8)
+    - pkgconfig(gio-unix-2.0)
+    - pkgconfig(glib-2.0)
+    - pkgconfig(gnome-desktop-3.0)
+    - pkgconfig(gnome-settings-daemon)
+    - pkgconfig(gobject-introspection-1.0)
+    - pkgconfig(graphene-gobject-1.0)
+    - pkgconfig(gsettings-desktop-schemas)
+    - pkgconfig(gstreamer-1.0)
+    - pkgconfig(gtk+-3.0)
+    - pkgconfig(gtk-layer-shell-0)
+    - pkgconfig(ibus-1.0)
+    - pkgconfig(json-glib-1.0)
+    - pkgconfig(libcanberra)
+    - pkgconfig(libcanberra-gtk3)
+    - pkgconfig(libnotify)
+    - pkgconfig(libpeas-2)
+    - pkgconfig(libpulse)
+    - pkgconfig(libwnck-3.0)
+    - pkgconfig(libxfce4windowing-0)
+    - pkgconfig(polkit-agent-1)
+    - pkgconfig(polkit-gobject-1)
+    - pkgconfig(upower-glib)
+    - pkgconfig(uuid)
+    - pkgconfig(x11)
+    - pkgconfig(xcomposite)
+    - pkgconfig(xfixes)
+    - pkgconfig(xinerama)
+    - pkgconfig(xkbcommon)
+    - pkgconfig(xrandr)
+    - intltool
+    - meson
+    - sassc
+    - vala
+    - wlopm
+    - swayidle
+    - gammastep
+    - grim
+    - swaybg
+    - swaylock
+    - gtklock
+    - gtk-doc-devel
+rundeps    :
+    # Wymagane przez Budgie
+    - accountsservice
+    - budgie-screensaver
+    - gnome-settings-daemon
+    - gsettings-desktop-schemas
+    - zenity
+    - python-systemd
+
+    # Wayland / wlroots stack
+    - labwc
+    - wlroots
+    - xdg-desktop-portal
+    - xdg-desktop-portal-wlr
+
+    # Narzędzia wykorzystywane przez nowy Budgie (preview)
+    - wlopm        # zarządzanie monitorami (wlroots output manager)
+    - swayidle     # idle handler pod Waylanda
+    - grim         # screenshot (Wayland)
+    - slurp        # zaznaczanie obszaru (Wayland)
+patterns   :
+    - devel :
+        - /usr/include
+        - /usr/lib64/pkgconfig
+setup      : |
+    # 1. Wyśrodkowanie docka (linia 1376)
+    sed -i '1376s/Gtk\.Align\.START/Gtk.Align.CENTER/' src/panel/panel.vala
+
+    # 2. Brak rezerwacji miejsca (okna pod panel)
+    sed -i 's/GtkLayerShell.set_exclusive_zone(this, this.intended_size);/GtkLayerShell.set_exclusive_zone(this, 0);/g' src/panel/panel.vala
+
+    # 3. Naprawa animacji (z SHOW na HIDE w hide_panel) - KLUCZ DO DZIAŁANIA
+    sed -i '/private void hide_panel()/,/animation =/s/PanelAnimation.SHOW/PanelAnimation.HIDE/' src/panel/panel.vala
+
+    # 4. Neutralizacja blokady kursora (zmieniamy na if false)
+    sed -i 's/if (this.cursor_within_bounds())/if (1 == 2)/' src/panel/panel.vala
+
+    # 5. Przywrócenie inteligencji chowania (rozróżnienie Auto/Intelligent)
+    sed -i 's/if (true)/if (this.intersected)/g' src/panel/panel.vala
+    sed -i 's/target_state = PanelAnimation.HIDE;/target_state = PanelAnimation.HIDE; \/\/ wymuszone/g' src/panel/panel.vala
+
+    # 5. Naprawa gammastep - usuń flagę -P
+    find . -type f -exec sed -i 's/gammastep -o -P/gammastep/g' {} +
+
+    %meson_configure \
+        -Dwith-stateless=true \
+        -Dwith-hibernate=false
+build      : |
+    %ninja_build
+install    : |
+    %ninja_install

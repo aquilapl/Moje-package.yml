@@ -1,0 +1,37 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : lxpanel
+version    : 0.10.1
+release    : 5
+source     :
+    - https://github.com/lxde/lxpanel/archive/refs/tags/0.10.1.tar.gz : 52b3e42fb31236dc89ba2a484ca1c15a89eea098ba89f61d0b7e0e7926ab6493
+license    : GPL-2.0-or-later
+component  : desktop.lxde
+summary    : Lightweight X11 desktop panel for LXDE
+description: |
+    LXPanel is the standard panel of LXDE. It includes a taskbar, an application menu, and various applets.
+builddeps  :
+    - pkgconfig(gtk+-2.0)
+    - libgtk-2-devel
+    - libfm-devel         
+    - menu-cache-devel
+    - libwnck2-devel
+    - libx11-devel
+    - intltool
+    - gettext-devel
+    - pkgconf-devel
+    - libxml2-devel
+    - keybinder-legacy-devel
+    - wireless-tools-devel
+    - curl-devel
+    - alsa-lib-devel
+setup      : |
+    ./autogen.sh
+    %configure --sysconfdir=/etc \
+               --with-gtk=2 \
+               --disable-static
+build      : |
+    find . -name "tray.c" -exec sed -i 's/tr->invisible = g_object_ref_sink(G_OBJECT(invisible));/tr->invisible = GTK_WIDGET(g_object_ref_sink(G_OBJECT(invisible)));/' {} +
+    python3 $pkgfiles/patch_tray.py plugins/tray.c
+    %make
+install    : |
+    %make_install

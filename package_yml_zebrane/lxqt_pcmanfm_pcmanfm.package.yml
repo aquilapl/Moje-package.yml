@@ -1,0 +1,42 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : pcmanfm-qt
+version    : 2.2.0
+release    : 1
+source     :
+    - https://github.com/lxqt/pcmanfm-qt/archive/refs/tags/2.2.0.tar.gz : 499581661085f1a4d63d5d5324082fc483ecf08eb5d076d08edcf811b9dd6511
+license    : GPL-2.0-or-later
+component  : desktop.library
+summary    : File manager and desktop icon manager (Qt6)
+description: |
+    PCManFM-Qt is the Qt port of the PCManFM file manager. It's the standard file manager and desktop icon manager for LXQt.
+builddeps  :
+    - pkgconfig(Qt6Widgets)
+    - pkgconfig(Qt6Linguist)
+    - pkgconfig(Qt6DBus)
+    - pkgconfig(libfm-qt6)
+    - pkgconfig(libexif)
+    - pkgconfig(x11)          # <--- Rozwiązuje błąd X11/Xlib.h
+    - pkgconfig(xcb)          # <--- Wymagane przez zależności X11 w LXQt
+    - lxqt-build-tools-devel
+    - layer-shell-qt-devel
+    - menu-cache-devel
+    - libfm-extra-devel
+    - cmake
+    - ninja
+rundeps    :
+    - gvfs
+    - lxqt-menu-data
+setup      : |
+    mkdir build
+    cd build
+    cmake .. -G Ninja \
+        -DCMAKE_INSTALL_PREFIX=/usr \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DBUILD_WITH_QT6=ON \
+        -DUPDATE_TRANSLATIONS=OFF
+build      : |
+    cd build
+    ninja
+install    : |
+    cd build
+    DESTDIR=%installroot% ninja install

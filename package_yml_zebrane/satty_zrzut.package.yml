@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : satty
+version    : 0.20.0
+release    : 2
+source     :
+    - https://github.com/Satty-org/Satty/releases/download/v0.20.0/satty-x86_64-unknown-linux-gnu.tar.gz : b8a3a769f3be4f767d21f3848f0909c5c5aef88b703bd9b9e8d129c9546e2155
+homepage   : https://github.com/Satty-org/Satty
+license    : MPL-2.0
+component  : desktop.util
+summary    : Modern screenshot annotation tool
+description: |
+    Satty is a screenshot annotation tool inspired by Swappy and Flameshot.
+    It provides a simple and modern GTK4 interface for annotating screenshots
+    with support for various drawing tools, text, and shapes.
+rundeps    :
+    - libgtk-4
+    - libadwaita
+    - gdk-pixbuf
+builddeps  :
+    - pkgconfig(gtk4)
+    - pkgconfig(libadwaita-1)
+install    : |
+    install -Dm00755 satty $installdir/usr/bin/satty
+    install -Dm00644 completions/satty.bash $installdir/usr/share/bash-completion/completions/satty
+    install -Dm00644 completions/satty.fish $installdir/usr/share/fish/vendor_completions.d/satty.fish
+    install -Dm00644 completions/_satty $installdir/usr/share/zsh/site-functions/_satty
+

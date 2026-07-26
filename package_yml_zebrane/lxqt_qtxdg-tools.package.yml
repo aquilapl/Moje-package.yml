@@ -1,0 +1,31 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : qtxdg-tools
+version    : 4.2.0
+release    : 1
+source     :
+    - https://github.com/lxqt/qtxdg-tools/releases/download/4.2.0/qtxdg-tools-4.2.0.tar.xz : 503a6e37792709340dddd642821eca13ef8d789cd26a06983cb7c5e06b8d63af
+license    : LGPL-2.1-or-later
+component  : desktop.library
+summary    : User tools for libqtxdg
+description: |
+    qtxdg-tools contains the tools needed to handle XDG standards in LXQt, such as lxqt-admin-user and icon handling.
+builddeps  :
+    - pkgconfig(Qt6Widgets)
+    - qt6-base-private-devel
+    - lxqt-build-tools-devel
+    - libqtxdg-devel
+    - cmake
+setup      : |
+    # Qt6::GuiPrivate jest publiczną zależnością libqtxdg — musi być dostępne w CMake
+    sed -i '/find_package(Qt6/a if(Qt6_VERSION VERSION_GREATER_EQUAL 6.10)\n  find_package(Qt6 COMPONENTS GuiPrivate REQUIRED)\nendif()' CMakeLists.txt
+
+    mkdir build
+    cd build
+    cmake .. -DCMAKE_INSTALL_PREFIX=/usr \
+             -DCMAKE_BUILD_TYPE=Release
+build      : |
+    cd build
+    make
+install    : |
+    cd build
+    make DESTDIR=%installroot% install

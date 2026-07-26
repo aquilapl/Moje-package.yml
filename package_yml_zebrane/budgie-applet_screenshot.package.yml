@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : budgie-screenshot-applet
+version    : 1.2
+release    : 3
+source     :
+    - https://github.com/aquilapl/budgie-screenshot-applet/archive/refs/tags/1.2.tar.gz : 492b597ac72edcaf1d53e0572feafc7c55eb1b2386cb1834206fa668c600ef3c 
+
+license    : GPL-3.0-or-later
+component  : desktop.budgie
+summary    : Aplet zrzutu ekranu dla Budgie Desktop
+description: |
+    Prosty aplet umożliwiający robienie zrzutów ekranu w środowisku Budgie.
+builddeps  :
+    - libgtk-3-devel
+    - pkgconfig(budgie-3.0)
+    - libpeas-2-devel
+    - libgtk-layer-shell-devel
+    - meson
+    - ninja
+    - vala
+
+setup: |
+    meson setup build --prefix=/usr --libdir=lib64
+
+build: |
+    ninja -C build
+
+install: |
+    DESTDIR=$installdir ninja -C build install

@@ -1,0 +1,37 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : ipp-usb
+version    : 0.9.30
+release    : 2
+source     :
+    - https://github.com/OpenPrinting/ipp-usb/archive/0.9.30.tar.gz : 8c044bb0efb8807a64d406a1208cb82b7801d8349205d0ef8c03f637f0228651
+license    : Apache-2.0
+component  : system.utils
+summary    : Daemon for IPP-over-USB support
+description: |
+    ipp-usb allows using the IPP protocol over a USB connection.
+builddeps  :
+    - pkgconfig(libusb-1.0)
+    - pkgconfig(avahi-client)
+    - golang
+setup      : |
+    printf '\n[0924:42e8]\n  mfg        = Xerox\n  model      = B205\n  init-reset = hard\n\n[0924:42ea]\n  mfg        = Xerox\n  model      = B210\n  init-reset = hard\n\n[0924:42e9]\n  mfg        = Xerox\n  model      = B215\n  init-reset = hard\n' >> ipp-usb-quirks/Xerox.conf
+    # Zmień udev na standalone
+    sed -i 's/ipp-usb udev/ipp-usb standalone/' systemd-udev/ipp-usb.service
+    # Dodaj [Install]
+    printf '\n[Install]\nWantedBy=multi-user.target\n' >> systemd-udev/ipp-usb.service
+build      : |
+    %make
+install    : |
+    mkdir -p $installdir/usr/sbin
+    mkdir -p $installdir/usr/lib/udev/rules.d
+    mkdir -p $installdir/usr/lib/systemd/system
+    mkdir -p $installdir/etc/ipp-usb
+    mkdir -p $installdir/usr/share/ipp-usb/quirks
+    mkdir -p $installdir/usr/share/man/man8
+    
+    install -s ipp-usb $installdir/usr/sbin/
+    install -m 644 systemd-udev/*.rules $installdir/usr/lib/udev/rules.d/
+    install -m 644 systemd-udev/*.service $installdir/usr/lib/systemd/system/
+    install -m 644 ipp-usb.conf $installdir/etc/ipp-usb/
+    install -m 644 ipp-usb-quirks/* $installdir/usr/share/ipp-usb/quirks/
+    gzip <ipp-usb.8 > $installdir/usr/share/man/man8/ipp-usb.8.gz

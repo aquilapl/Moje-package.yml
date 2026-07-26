@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : libwnck2
+version    : 2.30.7
+release    : 2
+source     :
+    - https://download.gnome.org/sources/libwnck/2.30/libwnck-2.30.7.tar.xz : 8be84d5333f0ade0e61af9f4cbf7685cb7cce2aa0ee32f53bac32107a81fe194
+license    : LGPL-2.0-or-later
+component  : desktop.lxde
+summary    : Window Navigator Construction Kit (GTK2 legacy version)
+description: |
+    Legacy version of libwnck for GTK2 applications.
+builddeps  :
+    - pkgconfig(gtk+-2.0)
+    - libgtk-2-devel
+    - libx11-devel
+    - intltool
+    - gettext-devel
+    - pkgconf-devel
+    - keybinder-devel
+setup      : |
+    ./configure --prefix=/usr \
+                --libdir=/usr/lib64 \
+                --sysconfdir=/etc \
+                --disable-static
+build      : |
+    %make
+install    : |
+    %make_install
+    rm -f $installdir/usr/bin/wnckprop
+    rm -f $installdir/usr/bin/wnck-urgency-monitor

@@ -1,0 +1,33 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : budgie-wayfire-session
+version    : 0.1
+release    : 3
+source     :
+    - git|https://github.com/ubuntuBudgie/budgie-wayfire-session.git : main
+license    : GPL-2.0-or-later
+component  : desktop.budgie
+summary    : Budgie Wayland session using Wayfire
+description: |
+    Session files and configuration for running Budgie Desktop on Wayland
+    using the Wayfire compositor.
+
+builddeps  :
+    - pkgconfig(gtk+-3.0)
+    - libgtk-layer-shell-devel
+    - meson
+    - ninja
+    - wayfire
+
+rundeps    :
+    - wayfire
+    - libgtk-layer-shell
+
+setup      : |
+    %meson_configure
+
+build      : |
+    %ninja_build
+
+install    : |
+    %ninja_install
+

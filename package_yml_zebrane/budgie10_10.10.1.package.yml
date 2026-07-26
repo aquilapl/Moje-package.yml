@@ -1,0 +1,101 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : budgie-desktop
+version    : 10.10.2
+release    : 423
+source     :
+    - git|https://github.com/BuddiesOfBudgie/budgie-desktop.git : main
+license    : GPL-2.0-or-later
+component  : desktop.budgie
+summary    : Budgie Desktop with fixed intelligent hide + disabled dimming
+description: |
+    Budgie Desktop Environment 10.10.2 (git main) - Wayland + labwc
+    Patch: wyłączony dimming (fix black screen po idle)
+builddeps  :
+    - pkgconfig(accountsservice)
+    - pkgconfig(alsa)
+    - pkgconfig(gdk-pixbuf-2.0)
+    - pkgconfig(gdk-x11-3.0)
+    - pkgconfig(gdk-wayland-3.0)
+    - pkgconfig(gee-0.8)
+    - pkgconfig(gio-unix-2.0)
+    - pkgconfig(glib-2.0)
+    - pkgconfig(gnome-desktop-3.0)
+    - pkgconfig(gnome-settings-daemon)
+    - pkgconfig(gobject-introspection-1.0)
+    - pkgconfig(graphene-gobject-1.0)
+    - pkgconfig(gsettings-desktop-schemas)
+    - pkgconfig(gstreamer-1.0)
+    - pkgconfig(gtk+-3.0)
+    - pkgconfig(gtk-layer-shell-0)
+    - pkgconfig(ibus-1.0)
+    - pkgconfig(json-glib-1.0)
+    - pkgconfig(libcanberra)
+    - pkgconfig(libcanberra-gtk3)
+    - pkgconfig(libnotify)
+    - pkgconfig(libpeas-2)
+    - pkgconfig(libpulse)
+    - pkgconfig(libwnck-3.0)
+    - pkgconfig(libxfce4windowing-0)
+    - pkgconfig(polkit-agent-1)
+    - pkgconfig(polkit-gobject-1)
+    - pkgconfig(upower-glib)
+    - pkgconfig(uuid)
+    - pkgconfig(x11)
+    - pkgconfig(xcomposite)
+    - pkgconfig(xfixes)
+    - pkgconfig(xinerama)
+    - pkgconfig(xkbcommon)
+    - pkgconfig(xrandr)
+    - intltool
+    - meson
+    - sassc
+    - vala
+    - wlopm
+    - swayidle
+    - gammastep
+    - grim
+    - slurp
+    - swaybg
+    - swaylock
+    - gtklock
+    - gtk-doc-devel
+    - mesa-demos
+    - pkgconfig(libgtop-2.0)
+rundeps    :
+    - accountsservice
+    - budgie-screensaver
+    - gnome-settings-daemon
+    - gsettings-desktop-schemas
+    - zenity
+    - python-systemd
+    - libxfce4windowing
+    - labwc
+    - wlroots
+    - xdg-desktop-portal
+    - xdg-desktop-portal-wlr
+    - wlopm
+    - swayidle
+    - grim
+    - slurp
+    - mesa-demos
+patterns   :
+    - devel :
+        - /usr/include
+        - /usr/lib64/pkgconfig
+setup      : |
+    %meson_configure -Dxdp-libexecdir=/usr/lib64
+
+    # Zwiększ timeout
+    sed -i 's/timeout 30/timeout 180/g' src/daemon/screenlock.vala
+
+    # Najprostszy fix - wyłącz idle-dim w źródle
+    sed -i 's|bool isdimmable = this.power.get_boolean("idle-dim");|bool isdimmable = false; // patched - disable dimming to prevent black screen|' src/daemon/screenlock.vala
+
+    # No-op dim/undim
+    sed -i '/^	public async void dim() throws GLib.DBusError, GLib.IOError {/,/^	}/c\	public async void dim() throws GLib.DBusError, GLib.IOError {\n		debug("Dim disabled by patch");\n		return;\n	}' src/daemon/screenlock.vala
+
+    sed -i '/^	public async void undim() throws GLib.DBusError, GLib.IOError {/,/^	}/c\	public async void undim() throws GLib.DBusError, GLib.IOError {\n		debug("Undim disabled by patch");\n		return;\n	}' src/daemon/screenlock.vala
+build      : |
+    %ninja_build
+install    : |
+    %ninja_install

@@ -1,0 +1,59 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : gnome-network-displays
+version    : 0.99.0
+release    : 2
+source     :
+    - https://gitlab.gnome.org/GNOME/gnome-network-displays/-/archive/0.99.0/gnome-network-displays-0.99.0.tar.bz2 : fcec7ef6aef81978cafebb3d377965aa608191deb8b38a57f36544317ce04648
+license    : GPL-2.0-or-later
+component  : desktop.gnome
+summary    : Screen mirroring application for GNOME using Miracast
+description: |
+    GNOME Network Displays is an experimental implementation of Wi-Fi Display (Miracast).
+    It allows streaming the selected monitor to compatible devices within the GNOME desktop environment.
+builddeps  :
+    - pkgconfig(gstreamer-1.0)
+    - pkgconfig(gstreamer-sdp-1.0)
+    - pkgconfig(gstreamer-webrtc-1.0)
+    - pkgconfig(gstreamer-rtsp-server-1.0)
+    - pkgconfig(gstreamer-plugins-base-1.0)
+    - pkgconfig(avahi-client)
+    - pkgconfig(avahi-gobject)
+    - pkgconfig(gtk4)
+    - pkgconfig(libnm)
+    - pkgconfig(libpulse)
+    - pkgconfig(gobject-introspection-1.0)
+    - pkgconfig(libprotobuf-c)
+    - pkgconfig(json-glib-1.0)
+    - pkgconfig(libsoup-3.0)
+    - pkgconfig(libportal-gtk4)
+    - pkgconfig(libadwaita-1)
+    - meson
+    - ninja
+    - vala
+    - libxml2-devel
+    - openconnect-devel
+    - desktop-file-utils
+    - appstream-devel
+rundeps    :
+    - gstreamer                    # Rdzeń GStreamer
+    - gstreamer-plugins-base        # Zmieniono, aby była jawna wersja 1.0
+    - gstreamer-plugins-good        # Zmieniono, aby była jawna wersja 1.0
+    - gstreamer-plugins-bad         # Zmieniono, aby była jawna wersja 1.0
+    - gstreamer-plugin-libav        # Zmieniono, aby była jawna wersja 1.0
+    - gstreamer-rtsp-server             # Zmieniono, aby była jawna wersja 1.0
+    - avahi
+    - libgtk-4
+    - libnma
+    - pulseaudio
+    - openconnect
+    - protobuf-c
+    - libjson-glib
+    - libsoup3
+    - libportal-gtk4
+    - libadwaita
+setup      : |
+    %meson_configure
+build      : |
+    %ninja_build
+install    : |
+    %ninja_install

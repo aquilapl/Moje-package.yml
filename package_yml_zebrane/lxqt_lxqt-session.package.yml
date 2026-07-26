@@ -1,0 +1,45 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : lxqt-session
+version    : 2.2.0
+release    : 6
+source     :
+    - https://github.com/lxqt/lxqt-session/releases/download/2.2.0/lxqt-session-2.2.0.tar.xz : 27bc2613b516af503511f15f38216ef9650bc8f65ae6154990b76b1a20d3898a
+license    : LGPL-2.1-or-later
+component  : desktop.library
+summary    : LXQt session manager
+description: |
+    lxqt-session is the session manager for the LXQt desktop. It handles the startup of the desktop environment and manages user sessions.
+
+builddeps  :
+    - qt6-base-devel
+    - qt6-base-private-devel
+    - pkgconfig(Qt6DBus)
+    - pkgconfig(Qt6Xml)
+    - pkgconfig(libproc2)
+    - pkgconfig(x11)
+    - lxqt-build-tools-devel
+    - libqtxdg-devel
+    - liblxqt-devel
+    - qtxdg-tools-devel
+    - cmake
+    - kf6-kwindowsystem-devel
+    - layer-shell-qt-devel
+    - xdg-user-dirs
+
+setup      : |
+    # Qt6::GuiPrivate jest publiczną zależnością libqtxdg/liblxqt — musi być
+    # znalezione przed wczytaniem ich plików cmake przez find_package(lxqt)
+    sed -i '/find_package(Qt6/a if(Qt6_VERSION VERSION_GREATER_EQUAL 6.10)\n  find_package(Qt6 COMPONENTS GuiPrivate REQUIRED)\nendif()' CMakeLists.txt
+
+    mkdir -p build
+    cd build
+    cmake .. -GNinja \
+        -DCMAKE_INSTALL_PREFIX=/usr \
+        -DCMAKE_BUILD_TYPE=Release
+build      : |
+    cd build
+    ninja
+
+install    : |
+    cd build
+    DESTDIR=%installroot% ninja install

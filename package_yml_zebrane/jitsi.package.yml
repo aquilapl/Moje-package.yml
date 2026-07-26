@@ -1,0 +1,63 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : jitsi-meet
+version    : 2.0.10655
+release    : 1
+source     :
+    - https://github.com/jitsi/jitsi-meet/archive/refs/tags/stable/jitsi-meet_10655.tar.gz : 29a24d7cd71fd6a620c72cd517bcfc7587ad88f96ae846a82079e00ced2542f4
+license    : Apache-2.0
+component  : network.web
+networking : yes
+summary    : Jitsi Meet - Secure, Simple and Scalable Video Conferences
+description: |
+    Jitsi Meet is an open-source (Apache) WebRTC JavaScript application that uses 
+    Jitsi Videobridge to provide high quality, secure and scalable video conferences.
+builddeps  :
+    - nodejs
+    - git
+rundeps    :
+    - nodejs
+    - prosody
+    - jicofo
+    - jitsi-videobridge
+setup      : |
+    # Instalacja zależności npm
+    npm install
+build      : |
+    # Build aplikacji Jitsi Meet
+    make
+install    : |
+    # Tworzenie struktury katalogów
+    install -dm755 $installdir/usr/share/jitsi-meet
+    install -dm755 $installdir/etc/jitsi/meet
+    
+    # Kopiowanie plików aplikacji
+    cp -r * $installdir/usr/share/jitsi-meet/
+    
+    # Konfiguracja
+    install -Dm644 config.js $installdir/etc/jitsi/meet/config.js
+    install -Dm644 interface_config.js $installdir/etc/jitsi/meet/interface_config.js
+    
+    # Symlinki do konfiguracji
+    ln -sf /etc/jitsi/meet/config.js $installdir/usr/share/jitsi-meet/config.js
+    ln -sf /etc/jitsi/meet/interface_config.js $installdir/usr/share/jitsi-meet/interface_config.js
+    
+    # Nginx configuration (opcjonalnie)
+    install -dm755 $installdir/usr/share/defaults/etc/nginx/sites-available
+    cat > $installdir/usr/share/defaults/etc/nginx/sites-available/jitsi-meet << 'EOFNGINX'
+    server {
+        listen 80;
+        listen [::]:80;
+        server_name jitsi.example.com;
+        root /usr/share/jitsi-meet;
+        index index.html;
+        location ~ ^/([^/]+)/(.*)$ {
+            proxy_pass http://localhost:5280/$1/$2;
+            proxy_set_header X-Forwarded-For $remote_addr;
+            proxy_set_header Host $http_host;
+        }
+        location / {
+            ssi on;
+            try_files $uri $uri/ /index.html;
+        }
+    }
+    EOFNGINX

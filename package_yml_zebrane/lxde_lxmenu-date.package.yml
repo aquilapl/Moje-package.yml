@@ -1,0 +1,22 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : lxmenu-data
+version    : 0.1.5
+release    : 1
+source     :
+    - https://downloads.sourceforge.net/lxde/lxmenu-data-0.1.5.tar.xz : 9fe3218d2ef50b91190162f4f923d6524c364849f87bcda8b4ed8eb59b80bab8 
+license    : LGPL-2.1-or-later
+component  : desktop.lxde
+summary    : Pliki danych dla menu LXDE
+description: |
+    lxmenu-data dostarcza pliki XML definiujące strukturę menu start zgodnie ze standardami freedesktop.org.
+setup      : |
+    ./configure --prefix=/usr \
+                --sysconfdir=/etc \
+                --datadir=/usr/share \
+                --localstatedir=/var \
+                --infodir=/usr/share/info \
+                --mandir=/usr/share/man
+build      : |
+    %make
+install    : |
+    %make_install
