@@ -1,9 +1,9 @@
 # yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
 name       : clapper
-version    : 0.6.1
-release    : 1
+version    : 0.10.0
+release    : 3
 source     :
-    - https://github.com/Rafostar/clapper/archive/refs/tags/0.6.1.tar.gz : d244ec6108ebff5ccc817a5888f3f73f52cac129fe480d480cb3f6b9db19cfbe
+    - https://github.com/Rafostar/clapper/archive/refs/tags/0.10.0.tar.gz : 344c0f20e540a63c6fb44cdd5de88c168ed145bb66c1307e79b2b08124780118
 homepage   : https://github.com/Rafostar/clapper
 license    : GPL-3.0-or-later
 component  : multimedia.video
@@ -19,9 +19,11 @@ builddeps  :
     - pkgconfig(gstreamer-video-1.0)
     - pkgconfig(graphene-gobject-1.0)
     - pkgconfig(microdns)
+    - pkgconfig(libpeas-2)
+    - pkgconfig(libsoup-3.0)
     - desktop-file-utils
 setup      : |
-    %meson_configure
+    %meson_configure -Denhancers-loader=enabled
 build      : |
     %ninja_build
 install    : |
