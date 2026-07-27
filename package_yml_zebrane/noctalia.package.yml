@@ -1,9 +1,8 @@
-# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
 name: noctalia
 version: "5.0.0"
-release: 1
+release: 5
 source:
-  - https://github.com/noctalia-dev/noctalia/archive/refs/tags/v5.0.0-beta.3.tar.gz : 0cd9d718acb95eec8500e6159c2981de46070f13f0fdacf7cb1e51cb2cbddb5e
+  - https://github.com/noctalia-dev/noctalia/releases/download/v5.0.0-beta.5/noctalia-v5.0.0-beta.5.tar.gz : d058b0bdd13b8788998a829a82b91ca23364bbfcb263696409005867dd4d0f6c
 homepage: https://noctalia.dev/
 license: GPL-3.0-or-later
 summary: Sleek and minimal Wayland desktop shell
@@ -33,6 +32,8 @@ builddeps:
   - libqalculate-devel
   - nlohmann-json
   - libwebp-devel 
+  - libsecret-devel
+  - libsodium-devel
 
 rundeps:
   - qt6-base
