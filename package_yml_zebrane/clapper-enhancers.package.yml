@@ -1,0 +1,29 @@
+name       : clapper-enhancers
+version    : 0.10.0
+release    : 3
+source     :
+    - https://github.com/Rafostar/clapper-enhancers/archive/refs/tags/0.10.0.tar.gz : 54061d27e32b4529dba62f7dc81c72405388ad09a5b3d8d6860d69c7206bfd97
+homepage   : https://github.com/Rafostar/clapper-enhancers
+license    : GPL-3.0-or-later
+component  : multimedia.video
+summary    : Enhancers for Clapper media player
+description: |
+    Additional plugins for Clapper media player.
+
+builddeps  :
+    - pkgconfig(gstreamer-1.0)
+    - pkgconfig(gtk4)
+    - pkgconfig(libadwaita-1)
+    - pkgconfig(json-glib-1.0)
+    - pkgconfig(libpeas-2)
+    - pkgconfig(clapper-0.0)
+    - pkgconfig(microdns)
+    - libsoup3-devel
+    - sqlite3-devel
+
+setup      : |
+    %meson_configure
+build      : |
+    %ninja_build
+install    : |
+    %ninja_install
