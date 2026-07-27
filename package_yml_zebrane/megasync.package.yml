@@ -1,9 +1,8 @@
-# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
 name       : megasync
-version    : 6.2.2
-release    : 4
+version    : 6.5.0
+release    : 5
 source     :
-    - https://mega.nz/linux/repo/xUbuntu_25.10/amd64/megasync_6.2.2-1.1_amd64.deb : 10dcdbdda87b4cf15e6ee33b0e6950da66608e15195229e357ea14df1210e6d0
+    - https://mega.nz/linux/repo/xUbuntu_25.10/amd64/megasync_6.5.0-1.1_amd64.deb : b21ece8d8394671160d08f9f9ed0d35bd1916c48edcb9b4b4f83a3a246153056
 license    : © MEGA 2020 All rights reserved
 strip      : no
 component  : network.clients
