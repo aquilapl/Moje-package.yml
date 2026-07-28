@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : wlrctl
+version    : 0.2.2
+release    : 1
+source     :
+    - https://git.sr.ht/~brocellous/wlrctl/archive/v0.2.2.tar.gz : b5b3836091c41de09a832df1e5eb4747841d7ae670367e413487d5be7a5f2849
+license    : MIT
+component  : desktop.wayland
+summary    : Utility to activity monitor and control Wayland compositors
+description:
+    wlrctl is a command line utility for monitoring and controlling Wayland compositors that support the wlr-foreign-toplevel-management and virtual-keyboard protocols.
+builddeps  :
+    - pkgconfig(wayland-client)
+    - pkgconfig(wayland-protocols)
+    - pkgconfig(xkbcommon)
+    - scdoc
+setup      : |
+    %meson_configure -Dman-pages=disabled
+build      : |
+    %ninja_build
+install    : |
+    %ninja_install
+    %install_license LICENSE
