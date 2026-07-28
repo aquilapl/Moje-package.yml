@@ -1,9 +1,9 @@
 # yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
 name    : zapzap
-version : 6.5.2.2
-release : 3
+version : 7.1
+release : 6
 source  :
-    - https://github.com/rafatosta/zapzap/archive/refs/tags/6.5.2.2.tar.gz : a6cbe2a6418190457e3b99a727b4c42bdb697d115ab34e03c5acf3309039b00a
+    - https://github.com/rafatosta/zapzap/archive/refs/tags/7.1.tar.gz : 5de324039932f189a97f2463cde75bda55a72150e67328876b5689bf0590f60a
 homepage: https://github.com/rafatosta/zapzap
 license : GPL-3.0-or-later
 component: network.im
@@ -24,21 +24,11 @@ rundeps:
     - python-inflect
     - python-jaraco.text
 
-patches:
-    - fix-trayicon-size.patch
-
-files:
-    - files/zapzap.mo
-
 build: |
-    %patch -p1 -i $pkgfiles/fix-trayicon-size.patch
-    python -m build --wheel --no-isolation
+     python -m build --wheel --no-isolation
 
 install: |
     python -m installer --destdir=$installdir dist/*.whl
-
-    install -Dm644 $pkgfiles/zapzap.mo \
-        $installdir/usr/lib64/python3.14/site-packages/zapzap/po/pl/LC_MESSAGES/zapzap.mo
 
     install -Dm644 share/applications/com.rtosta.zapzap.desktop \
         $installdir/usr/share/applications/com.rtosta.zapzap.desktop
