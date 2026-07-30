@@ -1,0 +1,32 @@
+name       : timeshift
+version    : 25.07.7
+release    : 5
+source     :
+    - https://github.com/linuxmint/timeshift/archive/refs/tags/master.lmde7.tar.gz : a41a057e9bf06846cc4fd19fff78a5f730d1bb6be0d973e1a0e4a8b21e8eba07
+license    : GPL-2.0-or-later
+component  : system.utils
+summary    : Creates a snapshot of the system
+description: |
+    Timeshift is a great tool, which monitors your system & application-level changes and gives you the ability to roll back your system in the previous state.
+builddeps  :
+    - pkgconfig(gee-0.8)
+    - pkgconfig(xapp)
+    - pkgconfig(xkbfile)
+    - pkgconfig(libgnomekbd)
+    - libvte-devel
+    - libjson-glib-devel
+    - meson
+    - vala
+    - help2man 
+    - gettext
+rundeps    :    
+    - rsync
+setup      : |
+    # Usuń zależność od crontab i run-parts (używamy tylko GUI, bez harmonogramu)
+    sed -i 's/"crontab",//' src/Core/Main.vala
+    sed -i 's/, "run-parts"//' src/Core/Main.vala
+    %meson_configure
+build      : |
+    %ninja_build
+install    : |
+    %ninja_install
