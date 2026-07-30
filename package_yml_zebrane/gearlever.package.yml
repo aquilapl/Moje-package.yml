@@ -1,9 +1,9 @@
 # yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
 name       : gearlever
-version    : 4.5.4
-release    : 5
+version    : 4.6.2
+release    : 6
 source     :
-    - https://github.com/mijorus/gearlever/archive/refs/tags/4.5.4.tar.gz : b2d3da99dcead7adcf7472d65537ab8cc32325a2179ea403f25f3adf36ceff69
+    - https://github.com/mijorus/gearlever/archive/refs/tags/4.6.2.tar.gz : 9f8f7a43d51e8ddcb66ee1d9aa5e6d1b9f5948c70e51be89e5bac045a01bd9ca
 homepage   : https://github.com/mijorus/gearlever
 license    : GPL-3.0-or-later
 component  : system.utils
@@ -42,3 +42,4 @@ install    : |
     
     # Instalacja skryptu pomocniczego
     install -Dm00755 build-aux/get_appimage_offset.sh $installdir/usr/bin/get_appimage_offset
+    %install_license COPYING
