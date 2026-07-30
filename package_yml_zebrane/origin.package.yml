@@ -1,9 +1,9 @@
 # yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
 name       : brave-origin
-version    : 1.93.126
-release    : 5
+version    : 1.93.129
+release    : 6
 source     :
-    -  https://github.com/brave/brave-browser/releases/download/v1.93.126/brave-origin_1.93.126_amd64.deb : 2cfd481f55aa72df322f5a89d91aab5472d5121640e100854be464661fe9664b
+    - https://github.com/brave/brave-browser/releases/download/v1.93.129/brave-origin_1.93.129_amd64.deb : 17977aeb4b78b79d8bdbb82df1217d9ffe789662be09ea997aa95b4bce308ef5
 homepage   : https://brave.com/origin/linux/
 license    :
     - GPL-2.0-or-later
@@ -38,16 +38,21 @@ setup      : |
     tar xf data.tar.*
 install    : |
     install -Ddm00755 ${installdir}
-    cp -r usr ${installdir}/
 
-    cp -r opt/brave.com/brave-origin ${installdir}/usr/share/
+    cp -a usr ${installdir}/
 
-    # Popraw symlink binarki (upstream wskazuje na /opt, my mamy w /usr/share)
-    rm ${installdir}/usr/bin/brave-origin-stable
-    ln -s /usr/share/brave-origin/brave-origin ${installdir}/usr/bin/brave-origin-stable
+    rm -f ${installdir}/usr/bin/brave-origin-stable
 
-    # Przenieś appdata → metainfo
+    install -dm00755 ${installdir}/usr/share
+    cp -a opt/brave.com/brave-origin ${installdir}/usr/share/
+
+    ln -s ../share/brave-origin/brave-origin ${installdir}/usr/bin/brave-origin-stable
+
+    rm -rf ${installdir}/usr/share/doc/brave-origin-stable
+
     install -dm00755 ${installdir}/usr/share/metainfo
     mv ${installdir}/usr/share/appdata/brave-origin.appdata.xml \
         ${installdir}/usr/share/metainfo/
     rmdir ${installdir}/usr/share/appdata
+
+    %install_license opt/brave.com/brave-origin/LICENSE
