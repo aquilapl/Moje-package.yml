@@ -1,0 +1,25 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : wiremix
+version    : 0.11.0
+release    : 2
+source     :
+    - https://github.com/tsowell/wiremix/archive/v0.11.0.tar.gz : 62a7cace79c9af537e0917a6d4e5da66b2efe2b4abc5f08c0fbaed727acc8c9f
+license    :
+    - MIT
+    - Apache-2.0
+component  : multimedia.audio
+summary    : A simple TUI audio mixer for PipeWire
+description: |
+    Wiremix is a simple terminal-based audio mixer for PipeWire.
+networking : true
+builddeps  :
+    - pkgconfig(libpipewire-0.3)
+    - rust
+setup      : |
+    %cargo_fetch
+build      : |
+    %cargo_build
+install    : |
+    install -Dm00755 target/release/wiremix $installdir/usr/bin/wiremix
+    install -Dm00644 README.md $installdir/usr/share/doc/wiremix/README.md
+    install -Dm00644 LICENSE-MIT $installdir/usr/share/licenses/wiremix/LICENSE-MIT
