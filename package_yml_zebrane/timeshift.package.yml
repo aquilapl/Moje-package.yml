@@ -1,8 +1,9 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
 name       : timeshift
-version    : 25.07.7
-release    : 5
+version    : 25.12.4
+release    : 6
 source     :
-    - https://github.com/linuxmint/timeshift/archive/refs/tags/master.lmde7.tar.gz : a41a057e9bf06846cc4fd19fff78a5f730d1bb6be0d973e1a0e4a8b21e8eba07
+    - https://github.com/linuxmint/timeshift/archive/refs/tags/master.lmde7.tar.gz : e869f12364ad17149560c6c7e3cffe5b660e90663ddb6823323acd0a151c9603
 license    : GPL-2.0-or-later
 component  : system.utils
 summary    : Creates a snapshot of the system
@@ -30,3 +31,4 @@ build      : |
     %ninja_build
 install    : |
     %ninja_install
+    %install_license debian/copyright
