@@ -1,0 +1,70 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : freetube
+version    : 0.25.1
+release    : 4
+source     :
+    -  https://github.com/FreeTubeApp/FreeTube/releases/download/v0.25.1-beta/freetube_0.25.1_beta_amd64.deb : e30a9e4f0bb0887d0691f5479e04963f8d9aec8d232f9d1cef6577b8af1a50ab
+license    : AGPL-3.0-or-later
+component  : multimedia.video
+summary    : Private YouTube client built on Electron and Invidious
+description: |
+    FreeTube is a private YouTube client that uses the Invidious API.
+    It allows you to watch YouTube without being tracked.
+
+builddeps  :
+    - binutils
+    - tar
+    - at-spi2-devel
+    - alsa-lib-devel
+    - libcairo-devel
+    - cups-devel
+    - libgtk-3-devel
+    - libx11-devel
+    - libxcb-devel
+    - libxcomposite-devel
+    - libxdamage-devel
+    - libxext-devel
+    - libxfixes-devel
+    - libxkbcommon-devel
+    - libxrandr-devel
+    - mesalib-devel
+    - pango-devel
+rundeps    :
+    - at-spi2
+    - libcairo
+    - cups
+    - libgtk-3
+    - libx11
+    - libxcb
+    - libxcomposite
+    - libxdamage
+    - libxext
+    - libxfixes
+    - libxrandr
+    - mesalib
+    - pango
+
+install    : |
+    # Rozpakuj .deb
+    ar x $sources/freetube_*
+    tar -xf data.tar.xz
+
+    # Przenieś zawartość do katalogu instalacyjnego
+    install -d $installdir/opt/FreeTube
+    cp -r opt/FreeTube/* $installdir/opt/FreeTube/
+
+    # Zainstaluj plik desktop i ikonę
+    install -Dm00644 usr/share/applications/freetube.desktop $installdir/usr/share/applications/freetube.desktop
+    install -Dm00644 usr/share/icons/hicolor/scalable/apps/freetube.svg $installdir/usr/share/icons/hicolor/scalable/apps/freetube.svg
+
+    # Wrapper
+    install -Dm00755 $pkgfiles/freetube-wrapper.sh $installdir/usr/bin/freetube
+    install -Dm00644 $installdir/opt/FreeTube/LICENSE.electron.txt $installdir/usr/share/licenses/freetube/LICENSE.electron.txt
+    install -Dm00644 $installdir/opt/FreeTube/LICENSES.chromium.html $installdir/usr/share/licenses/freetube/LICENSES.chromium.html
+
+files      :
+    - /opt/FreeTube
+    - /usr/bin/freetube
+    - /usr/share/applications/freetube.desktop
+    - /usr/share/icons/hicolor/512x512/apps/freetube.png
+
