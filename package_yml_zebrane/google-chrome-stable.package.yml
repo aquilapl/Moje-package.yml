@@ -1,0 +1,45 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : google-chrome-stable
+version    : 151.0.7922.71
+release    : 1
+source     :
+    - https://dl.google.com/linux/deb/pool/main/g/google-chrome-stable/google-chrome-stable_151.0.7922.71-1_amd64.deb : c86cafc697ecdb88259312cef47e464d1278643610500a7c9104e6bb1af3ba5c
+homepage   : https://www.google.com/chrome/
+license    : EULA
+strip      : no
+component  : network.web.browser
+summary    : Google Chrome web browser
+description: |
+    Google Chrome is a browser that combines a minimal design with sophisticated technology to make the web faster, safer, and easier.
+builddeps  :
+    - binutils
+rundeps    :
+    - at-spi2
+    - liberation-fonts-ttf
+    - xdg-utils
+setup      : |
+    # Rozpakowujemy deb do wydzielonego podkatalogu 'extracted'
+    mkdir extracted
+    cd extracted
+    ar xf $sources/google-chrome-stable_${version}*
+    tar xf data.tar.xz
+install    : |
+    cd extracted
+
+    # Tworzymy katalogi docelowe, aby cp nie zmieniało nazw folderów
+    install -dm00755 $installdir/opt
+    install -dm00755 $installdir/usr/share
+
+    # Kopiujemy zawartość do utworzonych katalogów
+    cp -a opt/* $installdir/opt/
+    cp -a usr/share/* $installdir/usr/share/
+
+    # Dowiązanie binarne
+    install -dm00755 $installdir/usr/bin
+    ln -s /opt/google/chrome/google-chrome $installdir/usr/bin/google-chrome
+
+    # Uprawnienia dla sandboxa
+    chmod 4755 $installdir/opt/google/chrome/chrome-sandbox
+
+    # Licencja
+    install -Dm00644 opt/google/chrome/WidevineCdm/LICENSE $installdir/usr/share/licenses/google-chrome-stable/LICENSE
