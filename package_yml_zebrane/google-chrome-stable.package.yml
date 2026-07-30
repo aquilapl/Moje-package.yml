@@ -14,11 +14,23 @@ description: |
 builddeps  :
     - binutils
 rundeps    :
+    - alsa-lib
     - at-spi2
+    - libcairo
+    - cups
+    - libx11
+    - libxcb
+    - libxcomposite
+    - libxdamage
+    - libxext
+    - libxfixes
+    - libxkbcommon
+    - libxrandr
     - liberation-fonts-ttf
+    - mesalib
+    - pango
     - xdg-utils
 setup      : |
-    # Rozpakowujemy deb do wydzielonego podkatalogu 'extracted'
     mkdir extracted
     cd extracted
     ar xf $sources/google-chrome-stable_${version}*
@@ -26,20 +38,27 @@ setup      : |
 install    : |
     cd extracted
 
-    # Tworzymy katalogi docelowe, aby cp nie zmieniało nazw folderów
+    # Tworzenie struktur katalogów
     install -dm00755 $installdir/opt
     install -dm00755 $installdir/usr/share
+    install -dm00755 $installdir/usr/bin
 
-    # Kopiujemy zawartość do utworzonych katalogów
     cp -a opt/* $installdir/opt/
     cp -a usr/share/* $installdir/usr/share/
 
-    # Dowiązanie binarne
-    install -dm00755 $installdir/usr/bin
-    ln -s /opt/google/chrome/google-chrome $installdir/usr/bin/google-chrome
+    # Dowiązania binarne
+    cd $installdir/usr/bin
+    ln -s ../../opt/google/chrome/google-chrome google-chrome
+    ln -s ../../opt/google/chrome/google-chrome google-chrome-stable
+    cd -
 
     # Uprawnienia dla sandboxa
     chmod 4755 $installdir/opt/google/chrome/chrome-sandbox
 
     # Licencja
     install -Dm00644 opt/google/chrome/WidevineCdm/LICENSE $installdir/usr/share/licenses/google-chrome-stable/LICENSE
+
+    # Ikony systemowe
+    for size in 16 24 32 48 64 128 256; do
+        install -Dm00644 opt/google/chrome/product_logo_${size}.png $installdir/usr/share/icons/hicolor/${size}x${size}/apps/google-chrome.png
+    done
