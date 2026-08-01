@@ -1,10 +1,10 @@
 name: noctalia
-version: "5.0.0"
-release: 5
+version: 5.0.0
+release: 6
 source:
-  - https://github.com/noctalia-dev/noctalia/releases/download/v5.0.0-beta.5/noctalia-v5.0.0-beta.5.tar.gz : d058b0bdd13b8788998a829a82b91ca23364bbfcb263696409005867dd4d0f6c
+  - https://github.com/noctalia-dev/noctalia/releases/download/v5.0.0-beta.7/noctalia-v5.0.0-beta.7.tar.gz : 0a6d5966ab6cb89fc0b7dfca07f8ef95b6b60d375c4110dc90382cf9071555bc
 homepage: https://noctalia.dev/
-license: GPL-3.0-or-later
+license    : MIT
 summary: Sleek and minimal Wayland desktop shell
 description: |
   Noctalia is a native Wayland desktop shell built with Quickshell/Qt6.
@@ -34,6 +34,9 @@ builddeps:
   - libwebp-devel 
   - libsecret-devel
   - libsodium-devel
+  - libical-devel
+  - libjxl-devel
+  - libsndfile-devel
 
 rundeps:
   - qt6-base
@@ -49,3 +52,4 @@ build: |
 
 install: |
   DESTDIR=$installdir meson install -C build-release
+  %install_license LICENSE
