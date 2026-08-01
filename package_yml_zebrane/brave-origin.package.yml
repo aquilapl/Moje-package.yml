@@ -33,26 +33,45 @@ builddeps  :
     - pkgconfig(xscrnsaver)
 rundeps    :
     - libgnome-keyring
+
 setup      : |
     ar x ${sources}/brave-origin_${version}_amd64.deb
     tar xf data.tar.*
+
 install    : |
     install -Ddm00755 ${installdir}
 
+    # Kopiowanie zawartości z .deb
     cp -a usr ${installdir}/
 
+    # Usunięcie oryginalnego symlinka
     rm -f ${installdir}/usr/bin/brave-origin-stable
 
+    # Przeniesienie aplikacji z opt/ do /usr/share/
     install -dm00755 ${installdir}/usr/share
     cp -a opt/brave.com/brave-origin ${installdir}/usr/share/
 
+    # Symlink do binarki
     ln -s ../share/brave-origin/brave-origin ${installdir}/usr/bin/brave-origin-stable
 
+    # Usunięcie zbędnej dokumentacji
     rm -rf ${installdir}/usr/share/doc/brave-origin-stable
 
+    # Metainfo (AppStream)
     install -dm00755 ${installdir}/usr/share/metainfo
     mv ${installdir}/usr/share/appdata/brave-origin.appdata.xml \
         ${installdir}/usr/share/metainfo/
     rmdir ${installdir}/usr/share/appdata
 
+    # Instalacja pliku .desktop
+    install -Dm644 usr/share/applications/brave-origin.desktop \
+        ${installdir}/usr/share/applications/brave-origin.desktop
+
+    # Instalacja ikon jednym poleceniem
+    for size in 16 24 32 48 64 128 256; do
+        install -Dm644 opt/brave.com/brave-origin/product_logo_${size}.png \
+            ${installdir}/usr/share/icons/hicolor/${size}x${size}/apps/brave-origin.png
+    done
+
+    # Licencja
     %install_license opt/brave.com/brave-origin/LICENSE
