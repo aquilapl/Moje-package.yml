@@ -1,0 +1,48 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : spotify
+version    : 1.2.92.147
+release    : 3
+source     :
+    - https://repository.spotify.com/pool/non-free/s/spotify-client/spotify-client_1.2.92.147.g5b8f9367_amd64.deb : 1903de14f55a94af3fe52d1b05ff76c40f1ec095355bb18bc2f389381e0be105
+homepage   : https://www.spotify.com
+license    : Copyright (c) 2020 Spotify Ltd
+strip      : no
+component  : multimedia.audio
+summary    : Spotify Music, Video and Podcast Streaming Client
+description: |
+    Spotify is a Swedish commercial music streaming, podcast and video service that provides digital rights management-protected content from record labels and media companies.
+builddeps  :
+    - at-spi2
+    - libgtk-4
+    - libnss
+    - libxtst
+    - xdg-utils
+    - libnotify
+    - libxscrnsaver
+    - libgnutls-utils
+    - curl-gnutls
+    - libgnutls
+    - gtk2-engine-murrine
+    - libayatana-appindicator
+    - libdbusmenu-devel
+rundeps    :
+    - at-spi2
+    - libgtk-4
+    - libnss
+    - libxtst
+    - xdg-utils
+    - libnotify
+    - libxscrnsaver
+    - libgnutls-utils
+    - curl-gnutls
+    - libgnutls
+    - gtk2-engine-murrine
+    - libayatana-appindicator
+setup      : |
+    ar xf $sources/spotify-client_${version}*
+    tar xf data.tar.gz
+install    : |
+    mkdir -p $installdir/usr
+    mkdir -p $installdir/usr/share/applications/
+    cp usr/share/spotify/spotify.desktop $installdir/usr/share/applications/
+    cp -R usr/{bin,share} $installdir/usr/
