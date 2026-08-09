@@ -1,9 +1,9 @@
 # yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
 name       : brave-origin
-version    : 1.93.129
-release    : 6
+version    : 1.93.135
+release    : 7
 source     :
-    - https://github.com/brave/brave-browser/releases/download/v1.93.129/brave-origin_1.93.129_amd64.deb : 17977aeb4b78b79d8bdbb82df1217d9ffe789662be09ea997aa95b4bce308ef5
+    - https://github.com/brave/brave-browser/releases/download/v1.93.135/brave-origin_1.93.135_amd64.deb : 19170c74d632001777cc6c47e21cbe1925d5b3935ee4e5977b97d646d07d8fef
 homepage   : https://brave.com/origin/linux/
 license    :
     - GPL-2.0-or-later
