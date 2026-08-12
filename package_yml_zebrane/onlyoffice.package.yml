@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
 name       : onlyoffice-desktopeditors
 version    : 9.4.0
-release    : 9
+release    : 10
 source     :
     - https://download.onlyoffice.com/install/desktop/editors/linux/onlyoffice-desktopeditors_amd64.deb : 4271434e81be42b1559fd989d24bf6d413482f278dc6a5e328202a4fc1a18649
 homepage   : https://www.onlyoffice.com
@@ -63,11 +63,6 @@ install    : |
 
     # Usuwanie pustych katalogów
     find $installdir -type d -empty -delete
-
-    # Konfiguracja ścieżki bibliotek dynamicznych dla systemu Solus
-    mkdir -p $installdir/etc/ld.so.conf.d
-    echo "/opt/onlyoffice/desktopeditors" > $installdir/etc/ld.so.conf.d/onlyoffice-desktopeditors.conf
-    echo "/opt/onlyoffice/desktopeditors/lib" >> $installdir/etc/ld.so.conf.d/onlyoffice-desktopeditors.conf
 
     # Tworzenie wrappera ze spójnym skalowaniem CEF dla skali 1.5
     cat << 'EOF' > $installdir/usr/bin/onlyoffice-desktopeditors
