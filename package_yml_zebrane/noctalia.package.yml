@@ -1,8 +1,9 @@
+ # yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
 name: noctalia
 version: 5.0.0
-release: 6
+release: 8
 source:
-  - https://github.com/noctalia-dev/noctalia/releases/download/v5.0.0-beta.7/noctalia-v5.0.0-beta.7.tar.gz : 0a6d5966ab6cb89fc0b7dfca07f8ef95b6b60d375c4110dc90382cf9071555bc
+  - https://github.com/noctalia-dev/noctalia/releases/download/v5.0.0-beta.8/noctalia-v5.0.0-beta.8.tar.gz : a227af00b949e3f93ff7aece18371d10523222e63b13f48cab2255d4815d30f9
 homepage: https://noctalia.dev/
 license    : MIT
 summary: Sleek and minimal Wayland desktop shell
