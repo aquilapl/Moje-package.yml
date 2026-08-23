@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : mpv-mpris
+version    : 1.2
+release    : 1
+source     :
+    - https://github.com/hoyon/mpv-mpris/archive/refs/tags/1.2.tar.gz : ecdc66f0182a38164b8bdc79502c575df3d2c4453bae5bff225c4e5ce9dbef6c
+homepage   : https://github.com/hoyon/mpv-mpris
+license    : MIT
+component  : multimedia.video
+summary    : MPRIS plugin for mpv
+description: |
+    Plugin for mpv which implements the MPRIS D-Bus interface.
+    Allows control of mpv using media keys and tools like playerctl.
+builddeps  :
+    - pkgconfig(glib-2.0)
+    - pkgconfig(gio-2.0)
+    - pkgconfig(mpv)
+    - pkgconfig(libavformat)
+rundeps    :
+    - mpv
+setup      : |
+    %make
+build      : |
+    %make
+install    : |
+    install -Dm00755 mpris.so $installdir/etc/mpv/scripts/mpris.so
+    %install_license LICENSE
