@@ -1,56 +1,80 @@
- # yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
-name: noctalia
-version: 5.0.0
-release: 8
-source:
-  - https://github.com/noctalia-dev/noctalia/releases/download/v5.0.0-beta.8/noctalia-v5.0.0-beta.8.tar.gz : a227af00b949e3f93ff7aece18371d10523222e63b13f48cab2255d4815d30f9
-homepage: https://noctalia.dev/
+# yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
+name       : noctalia
+version    : 5.0.0
+release    : 9
+source     :
+    - https://github.com/noctalia-dev/noctalia/releases/download/v5.0.0-beta.9/noctalia-v5.0.0-beta.9.tar.gz : f1c792682c8fd80870da67bdb1da16b0d98e1256ad89ed9671a53bc4fa15013a
+homepage   : https://noctalia.dev/
 license    : MIT
-summary: Sleek and minimal Wayland desktop shell
+summary    : Sleek and minimal Wayland desktop shell
 description: |
-  Noctalia is a native Wayland desktop shell built with Quickshell/Qt6.
+    Noctalia is a native Wayland desktop shell (C++ / OpenGL ES).
+    Bars, taskbar, dock, launcher, control center, notifications,
+    lock screen, wallpaper and more — without Qt/GTK.
 
 builddeps:
-  - meson
-  - ninja
-  - qt6-base-devel
-  - qt6-declarative-devel
-  - qt6-wayland-devel
-  - wayland-devel
-  - wayland-protocols-devel
-  - pkgconf
-  - libinput-devel
-  - stb
-  - tomlplusplus-devel
-  - md4c-devel
-  - json-c-devel
-  - sdbus-cpp-devel
-  - libgtk-3-devel
-  - librsvg-devel 
-  - pipewire-devel
-  - wireplumber-devel
-  - curl-devel
-  - libqalculate-devel
-  - nlohmann-json
-  - libwebp-devel 
-  - libsecret-devel
-  - libsodium-devel
-  - libical-devel
-  - libjxl-devel
-  - libsndfile-devel
+    - meson
+    - ninja
+    - pkgconf
+    # Wayland / GL
+    - pkgconfig(wayland-client)
+    - pkgconfig(wayland-protocols)
+    - pkgconfig(egl)
+    - pkgconfig(glesv2)
+    - libglvnd-devel
+    - mesalib-devel
+    # rendering / text
+    - pkgconfig(cairo)
+    - pkgconfig(pango)
+    - pkgconfig(harfbuzz)
+    - pkgconfig(freetype2)
+    - pkgconfig(fontconfig)
+    - pkgconfig(glib-2.0)
+    - pkgconfig(xkbcommon)
+    # system
+    - pkgconfig(libsecret-1)
+    - pkgconfig(libsodium)
+    - pkgconfig(sdbus-c++)
+    - pkgconfig(libpipewire-0.3)
+    - pkgconfig(wireplumber-0.5)
+    - pkgconfig(libcurl)
+    - pkgconfig(libwebp)
+    - pkgconfig(libjxl)
+    - pkgconfig(sndfile)
+    - pkgconfig(librsvg-2.0)
+    - pkgconfig(libqalculate)
+    - pkgconfig(libxml-2.0)
+    - pkgconfig(md4c)
+    - pkgconfig(tomlplusplus)
+    - pkgconfig(libical)
+    - pkgconfig(pam)
+    - pkgconfig(polkit-agent-1)
+    - nlohmann-json
+    - stb
+    - jemalloc-devel
 
-rundeps:
-  - qt6-base
-  - qt6-wayland
-  - wayland
-  - sdbus-cpp
+rundeps    :
+    - wayland
+    - sdbus-cpp
+    - pipewire
+    - wireplumber
+    - libsecret
+    - libsodium
+    - libwebp
+    - libjxl
+    - libsndfile
+    - librsvg
+    - libqalculate
+    - libical
+    - polkit
+    - pam
 
-setup: |
-  meson setup build-release --buildtype=release --prefix=/usr
+setup      : |
+    meson setup build-release --buildtype=release --prefix=/usr
 
-build: |
-  ninja -C build-release
+build      : |
+    ninja -C build-release
 
-install: |
-  DESTDIR=$installdir meson install -C build-release
-  %install_license LICENSE
+install    : |
+    DESTDIR=$installdir meson install -C build-release
+    %install_license LICENSE
