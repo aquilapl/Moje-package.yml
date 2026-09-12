@@ -1,9 +1,9 @@
 # yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
 name    : zapzap
-version : 7.1
-release : 6
+version : 7.4.4
+release : 7
 source  :
-    - https://github.com/rafatosta/zapzap/archive/refs/tags/7.1.tar.gz : 5de324039932f189a97f2463cde75bda55a72150e67328876b5689bf0590f60a
+    - https://github.com/rafatosta/zapzap/archive/refs/tags/7.4.4.tar.gz : f51e1ef2564d2af8070105220b5325204b285d0c306db7db55db63b4bcb53eee
 homepage: https://github.com/rafatosta/zapzap
 license : GPL-3.0-or-later
 component: network.im
