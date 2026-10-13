@@ -1,9 +1,9 @@
 # yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
 name    : zapzap
-version : 7.4.4
-release : 7
+version : 7.5
+release : 8
 source  :
-    - https://github.com/rafatosta/zapzap/archive/refs/tags/7.4.4.tar.gz : f51e1ef2564d2af8070105220b5325204b285d0c306db7db55db63b4bcb53eee
+    - https://github.com/rafatosta/zapzap/archive/refs/tags/7.5.tar.gz : f14207806ea5e590a8b6199579e25bf7e41a1263e025b3412dafce95522d7f61
 homepage: https://github.com/rafatosta/zapzap
 license : GPL-3.0-or-later
 component: network.im
@@ -25,6 +25,7 @@ rundeps:
     - python-jaraco.text
 
 build: |
+     %patch -p1 -i $pkgfiles/fix-trayicon-size.patch
      python -m build --wheel --no-isolation
 
 install: |
