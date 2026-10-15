@@ -1,9 +1,9 @@
 # yaml-language-server: $schema=/usr/share/ypkg/schema/schema.json
 name       : onlyoffice-desktopeditors
-version    : 9.4.0
-release    : 10
+version    : 10.0.0
+release    : 15
 source     :
-    - https://download.onlyoffice.com/install/desktop/editors/linux/onlyoffice-desktopeditors_amd64.deb : 4271434e81be42b1559fd989d24bf6d413482f278dc6a5e328202a4fc1a18649
+    - https://github.com/ONLYOFFICE/DesktopEditors/releases/download/v10.0.0/onlyoffice-desktopeditors_amd64.deb : 2190edb4022a2ac2f6eee0f78815520f0e4ece1e8a1097c645a6f9b225c8b59c
 homepage   : https://www.onlyoffice.com
 license    : GPL-3.0
 strip      : no
@@ -67,10 +67,10 @@ install    : |
     # Tworzenie wrappera ze spójnym skalowaniem CEF dla skali 1.5
     cat << 'EOF' > $installdir/usr/bin/onlyoffice-desktopeditors
     #!/bin/sh
-    export LD_LIBRARY_PATH="/opt/onlyoffice/desktopeditors:/opt/onlyoffice/desktopeditors/lib:${LD_LIBRARY_PATH}"
     export QT_SCALE_FACTOR=1
 
-    exec /opt/onlyoffice/desktopeditors/DesktopEditors \
+    exec env LD_LIBRARY_PATH="/opt/onlyoffice/desktopeditors:/opt/onlyoffice/desktopeditors/lib:${LD_LIBRARY_PATH}" \
+        /opt/onlyoffice/desktopeditors/DesktopEditors \
         --force-device-scale-factor=1.5 \
         "$@"
     EOF
