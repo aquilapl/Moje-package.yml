@@ -1,0 +1,39 @@
+name       : wordcraft
+version    : 0.7.0
+release    : 2
+source     :
+    - https://github.com/storytold/wordcraft/archive/refs/tags/v0.7.0.tar.gz : ee70e31d3b887c7e2c4b7d31de612ffddfb25a9359ed17d734b21a3b7f6891c0
+license    :
+    - MIT
+    - Apache-2.0
+component  : office
+summary    : Open-source reimplementation of Microsoft Word in pure Rust
+description: |
+    WordCraft is a fast, open-source word processor with the Word workflow:
+    ribbon, styles, tables, track changes, references and mail merge.
+    It reads and writes .docx and runs natively.
+builddeps  :
+    - pkgconfig(fontconfig)
+    - pkgconfig(freetype2)
+    - pkgconfig(harfbuzz)
+    - libxkbcommon-devel
+    - pkgconfig(wayland-client)
+    - pkgconfig(x11)
+    - pkgconfig(xcb)
+    - rust
+    - cargo-c
+networking : yes          
+setup      : |
+    %cargo_fetch
+build      : |
+    %cargo_build -p wordcraft
+install    : |
+    %cargo_install wordcraft
+
+    # .desktop
+    install -Dm00644 $pkgfiles/ai.storyteller.wordcraft.desktop \
+        $installdir/usr/share/applications/ai.storyteller.wordcraft.desktop
+
+    # ikony (hicolor z upstreamu)
+    install -dm00755 $installdir/usr/share/icons/hicolor
+    cp -a assets/app-icon/hicolor/* $installdir/usr/share/icons/hicolor/
