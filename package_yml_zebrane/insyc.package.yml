@@ -1,0 +1,52 @@
+name       : insync
+version    : 3.9.11.60043
+release    : 2
+source     :
+    - https://cdn.insynchq.com/builds/linux/3.9.11.60043/insync_3.9.11.60043-resolute_amd64.deb : 46b10cc4b461fdd7da9a8f0621575572f585c3b3cd7df731e6fc752940a2fd8a
+license    : Distributable
+component  : network.web
+summary    : Klient Google Drive, OneDrive i Dropbox
+description: |
+    Insync synchronizuje pliki z Google Drive, OneDrive i Dropbox.
+    Oprogramowanie zamknięte, pakiet zawiera gotowe pliki binarne.
+strip      : no
+debug      : no
+emul32     : no
+builddeps  :
+    - libglvnd
+    - libnss
+    - fontconfig
+    - xdg-utils
+    - qt5-base
+    - libxtst
+    - libgcc
+    - glib2
+    - pkgconfig(alsa)
+    - pkgconfig(libdrm)
+    - pkgconfig(libpulse)
+    - pkgconfig(libthai)
+    - pkgconfig(wayland-server)
+    - pkgconfig(x11-xcb)
+    - pkgconfig(xcb)
+    - pkgconfig(xcb-dri3)
+    - pkgconfig(xcb-glx)
+    - pkgconfig(xcb-randr)
+    - pkgconfig(xcb-shape)
+    - pkgconfig(xcb-sync)
+    - pkgconfig(xcb-xfixes)
+rundeps    :
+    - libglvnd
+    - libnss
+    - fontconfig
+    - xdg-utils
+    - qt5-base
+    - libxtst
+    - libgcc
+    - glib2
+setup      : |
+    ar x $sources/*.deb
+    tar xf data.tar.*
+install    : |
+    install -dm00755 $installdir/usr
+    cp -a usr/. $installdir/usr/
+    rmdir $installdir/usr/share/icons/hicolor/*/emblems
