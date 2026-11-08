@@ -1,0 +1,61 @@
+name       : oo7
+version    : 0.7.0
+release    : 2
+source     :
+    - https://github.com/linux-credentials/oo7/archive/refs/tags/0.7.0.tar.gz : 85072bbfb50e18bfcec35e13d14977e6d989435a1ddd0ba5e4d3d719f5b19be8
+homepage   : https://linux-credentials.github.io/oo7/oo7/
+license    : MIT
+component  : desktop.security
+networking : yes
+summary    : A Secret Service provider written in Rust
+description: |
+    oo7 is a D-Bus Secret Service provider written in Rust. It implements
+    org.freedesktop.Secrets and is intended as a lightweight, cross-desktop
+    replacement for gnome-keyring. It includes the daemon, XDG Desktop Portal
+    backend, PAM module for automatic unlocking, CLI and cargo credential helper.
+conflicts  :
+    - gnome-keyring
+builddeps  :
+    - pkgconfig(libsystemd)
+    - pkgconfig(pam)
+    - meson
+    - rust
+setup      : |
+    %cargo_fetch
+build      : |
+    # CLI tools (cargo workspace)
+    %cargo_build -p oo7-cli -p cargo-credential-oo7
+
+    # Daemon (org.freedesktop.secrets)
+    meson setup server build-server \
+        --prefix=/usr \
+        --libexecdir=lib64 \
+        --buildtype=release
+    ninja -C build-server
+
+    # Portal (org.freedesktop.impl.portal.Secret)
+    meson setup portal build-portal \
+        --prefix=/usr \
+        --libexecdir=lib64 \
+        --buildtype=release
+    ninja -C build-portal
+
+    # PAM module
+    meson setup pam build-pam \
+        --prefix=/usr \
+        --libdir=lib64 \
+        --buildtype=release
+    ninja -C build-pam
+install    : |
+    # CLI + cargo credential
+    install -Dm0755 target/release/oo7-cli %installroot%/usr/bin/oo7-cli
+    install -Dm0755 target/release/cargo-credential-oo7 %installroot%/usr/bin/cargo-credential-oo7
+
+    # Daemon, portal, PAM (meson install)
+    DESTDIR=%installroot% ninja -C build-server install
+    DESTDIR=%installroot% ninja -C build-portal install
+    DESTDIR=%installroot% ninja -C build-pam install
+
+    ln -sv /usr/lib64/oo7-daemon-login ${installdir}/usr/libexec/oo7-daemon-login
+
+    %install_license LICENSE
